@@ -1,71 +1,117 @@
-class Player():
+import data as g
+import pygame
+import misc
+import entity
+
+
+class Player(entity.Entity):
     def __init__(self,x,y):
-        fontObj = pygame.font.Font(FONTNAME,FONTSIZE).render('@',False,(255,255,255),(0,0,0))
-        self.image = Surface((FONTSIZE//2,FONTSIZE))
-        self.image.blit(fontObj,(0,0),(0,0,FONTSIZE//2,FONTSIZE))
-        self.pos = self.image.get_rect().move(Xt//2*(FONTSIZE//2),Yt//2*FONTSIZE)
-        self.xPos = len(playMap[0])//2
-        self.yPos = len(playMap)//2
+        fontObj = pygame.font.Font(g.FONTNAME,g.FONTSIZE).render('@',False,(255,255,255),(0,0,0))
+        self.image = pygame.Surface((g.FONTSIZE//2,g.FONTSIZE))
+        self.image.blit(fontObj,(0,0),(0,0,g.FONTSIZE//2,g.FONTSIZE))
+        self.pos = self.image.get_rect().move(g.Xt//2*(g.FONTSIZE//2),g.Yt//2*g.FONTSIZE)
+        self.xPos = len(g.playMap[0])//2
+        self.yPos = len(g.playMap)//2
         self.xDisp = self.xPos
         self.yDisp = self.yPos
-        SCREEN.blit(self.image,self.pos)
+        
+        self.actionPoints = 0
+        self.speed = 100
+        g.SCREEN.blit(self.image,self.pos)
+
+    def take_turn(self):
+        misc.displayMap(self.xDisp,self.yDisp)
+        while True:
+            for newEvent in pygame.event.get():
+    ##            print(newEvent.type)
+                
+                if newEvent.type == pygame.QUIT:
+                    pygame.quit()
+                                  
+                elif newEvent.type == pygame.KEYDOWN:
+    ##                print ("Key was" , newEvent.key)
+                    if newEvent.unicode == 'q':
+                        pygame.quit()
+                        playing = False
+                        break
+                    elif newEvent.unicode == '.':
+                        return 50
+                    elif newEvent.key in [273,274,275,276]:
+                        if newEvent.key == 273:
+                            dir = "UP"
+                        elif newEvent.key == 274:
+                            dir = "DOWN"
+                        elif newEvent.key == 276:
+                            dir = "LEFT"
+                        elif newEvent.key == 275:
+                            dir = "RIGHT"
+
+                        t = misc.checkOccupied(dir,self.xPos,self.yPos)
+                        if isinstance(t,entity.Entity):
+                            self.attack(t)
+                            return 200
+                        elif self.move(dir):
+                            return 100
+                
+                pygame.display.update()
+                return 0
 
     def move(self,direction):
-        if not checkMove(direction,self.xPos,self.yPos):
+        if not misc.checkMove(direction,self.xPos,self.yPos):
             print("Can't move there, sorry")
             return False
-        SCREEN.fill((0,0,0),self.pos)
-        SCREEN.blit(playMap[self.yPos][self.xPos].image , self.pos)
+        g.SCREEN.fill((0,0,0),self.pos)
+        g.SCREEN.blit(g.playMap[self.yPos][self.xPos].image , self.pos)
+        g.ENTS[self.yPos][self.xPos] = None
         
         if direction == "UP":
             if self.onEdge("y",-1):
-                self.pos=self.pos.move(0,-FONTSIZE)
+                self.pos=self.pos.move(0,-g.FONTSIZE)
                 self.yPos-=1
             else:
                 self.yPos-=1
                 self.yDisp-=1
-                displayMap(self.xDisp,self.yDisp)
+                misc.displayMap(self.xDisp,self.yDisp)
 
         elif direction == "DOWN":
             if self.onEdge("y",+1):
-                self.pos=self.pos.move(0,FONTSIZE)
+                self.pos=self.pos.move(0,g.FONTSIZE)
                 self.yPos+=1
             else:
                 self.yPos+=1
                 self.yDisp+=1
-                displayMap(self.xDisp,self.yDisp)
+                misc.displayMap(self.xDisp,self.yDisp)
             
         elif direction == "LEFT":
             if self.onEdge("x",-1):
                 self.xPos-=1
-                self.pos=self.pos.move(-FONTSIZE//2,0)
+                self.pos=self.pos.move(-g.FONTSIZE//2,0)
             else:
                 self.xPos-=1
                 self.xDisp-=1
-                displayMap(self.xDisp,self.yDisp)
+                misc.displayMap(self.xDisp,self.yDisp)
             
         elif direction == "RIGHT":
             if self.onEdge("x",+1):
                 self.xPos+=1
-                self.pos=self.pos.move(FONTSIZE//2,0)
+                self.pos=self.pos.move(g.FONTSIZE//2,0)
             else:
                 self.xPos+=1
                 self.xDisp+=1
-                displayMap(self.xDisp,self.yDisp)
-        SCREEN.blit(self.image, self.pos)
-##        print(self.image.get_rect() , self.pos)
-##        print(self.xPos,self.yPos)
-##        print(self.xDisp,self.yDisp)
+                misc.displayMap(self.xDisp,self.yDisp)
+        g.ENTS[self.yPos][self.xPos] = self
+        g.SCREEN.blit(self.image, self.pos)
 
+        return True
 
         
     def onEdge(self,axis,direct):
         if axis == "x":
-            if ((self.xPos - Xt//2) <= 0 or (self.xPos +Xt//2) >= len(playMap[0])) and ((self.xPos - Xt//2 +direct) <= 0 or (self.xPos +Xt//2 +direct) >= len(playMap[0])):
+            if ((self.xPos - g.Xt//2) <= 0 or (self.xPos +g.Xt//2) >= len(g.playMap[0])) and ((self.xPos - g.Xt//2 +direct) <= 0 or (self.xPos +g.Xt//2 +direct) >= len(g.playMap[0])):
                 return True
             return False
         else:
-            print(((self.yPos +Yt//2) ,len(playMap)))
-            if ((self.yPos -Yt//2) <= 0 or (self.yPos + Yt//2 ) >= len(playMap)-1) and ((self.yPos -Yt//2+direct) <= 0 or (self.yPos + Yt//2 + direct) >= len(playMap)-1):
+            if ((self.yPos -g.Yt//2) <= 0 or (self.yPos + g.Yt//2 ) >= len(g.playMap)-1) and ((self.yPos -g.Yt//2+direct) <= 0 or (self.yPos + g.Yt//2 + direct) >= len(g.playMap)-1):
                 return True
             return False
+

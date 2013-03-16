@@ -2,27 +2,12 @@ import pygame, sys,traceback
 import data as g
 import ship
 import player
-import environ
+import misc
+import gameTime
+import npc
 
+pygame.init()
 
-
-##FONTNAME = "DwarfFortressVan.ttf"
-##FONTSIZE = 24
-##WALKABLES = ["\u00B7",'\u00AA']
-##Xt = 50
-##Yt = Xt//2
-##
-##size = width, height = (Xt*FONTSIZE + 10, Yt*FONTSIZE + 5)
-##pygame.init()
-##pygame.font.init()
-##
-##SCREEN = pygame.display.set_mode(size)
-##CLOCK = pygame.time.Clock()
-##MWIDTH=0
-##MHEIGHT=0
-##playMap = []
-
-g.initGlobals()
 
 
 def enum(*sequential, **named):
@@ -31,86 +16,22 @@ def enum(*sequential, **named):
 
 def main():
     playing = True
-
-    pShip = ship.Ship(2)
-    print(MWIDTH,MHEIGHT)
-    displayMap(MWIDTH//2,MHEIGHT//2)
-##    print('*'*30)
-    player = Player(MWIDTH//2,MHEIGHT//2)
-    display.update()
+    timer = gameTime.Timer();
+    pShip = ship.Ship(1)
+    g.ENTS = [[None for i in range(g.MWIDTH)] for j in range(g.MHEIGHT)]
+    misc.displayMap(g.MWIDTH//2,g.MHEIGHT//2)
+    p = player.Player(g.MWIDTH//2,g.MHEIGHT//2)
+    matey = npc.NPC(g.N.CREWMAN,23,17)
+    g.ENTS[p.yPos][p.xPos] = p
+    timer.register(p)
+    timer.register(matey)
+    pygame.display.update()
+    
     while playing:
         
-        CLOCK.tick(60)
-        for newEvent in pygame.event.get():
-##            print(newEvent.type)
-            
-            if newEvent.type == QUIT:
-                pygame.quit()
-                              
-            elif newEvent.type == KEYDOWN:
-##                print ("Key was" , newEvent.key)
-                if newEvent.unicode == 'q':
-                    pygame.quit()
-                    playing = False
-                    break
-                elif newEvent.key == 273:
-                    player.move("UP")
-                elif newEvent.key == 274:
-                    player.move("DOWN")
-                elif newEvent.key == 276:
-                    player.move("LEFT")
-                elif newEvent.key == 275:
-                    player.move("RIGHT")
-            pygame.display.update()
-        
-        
+        timer.tick()
+        g.CLOCK.tick(60)
 
-##def fillplayMap():
-##    
-
-def debugMapDisplay():
-    for i in range (len(playMap)):
-        print()
-        for j in range(len(playMap[15])):
-            print(playMap[i][j].char,end = '')
-                  
-def displayMap(playerX,playerY):
-##    debugMapDisplay()
-    SCREEN.fill((0,0,0))
-    for y in range(Yt):
-        for x in range(Xt):
-##            print (playerY, Yt//2, playerX)
-            displayAt(playerX-Xt//2 +x, playerY-Yt//2 +y,x,y)
-
-def displayAt(xTile,yTile,x,y):
-##    print(yTile,xTile,x,y , )
-    SCREEN.blit(playMap[yTile][xTile].image,(x*FONTSIZE//2,y*FONTSIZE))
-
-
-
-def checkMove(direction,x,y):
-    
-    if direction == "UP":
-        if y == 0 or playMap[y-1][x].char not in WALKABLES:
-            return False
-    elif direction == "DOWN":
-        if y == len(playMap) or playMap[y+1][x].char not in WALKABLES:
-            return False
-    elif direction == "LEFT":
-        if x == 0 or playMap[y][x-1].char not in WALKABLES:
-            return False
-    elif direction == "RIGHT":
-        if x == len(playMap[0]) or playMap[y][x+1].char not in WALKABLES:
-            return False
-    return True
-
-
-
-          
-
-class NPC():
-    def __init__(self):
-        print("Non-players!")
 
 try:
     main()
