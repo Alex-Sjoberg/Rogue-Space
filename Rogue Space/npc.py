@@ -4,7 +4,7 @@ Created on Mar 10, 2013
 @author: asjoberg
 '''
 import data as g
-import pygame,misc,entity
+import pygame,misc,entity,tile
 
 class NPC(entity.Entity):
     def __init__(self,Ntype,xPos,yPos):
@@ -31,11 +31,9 @@ class NPC(entity.Entity):
             
         self.bg = bg   
         self.fg = fg
-            
-        fontObj = pygame.font.Font(g.FONTNAME,g.FONTSIZE).render(self.char,False,fg,bg)
-        self.image = pygame.Surface((g.FONTSIZE//2,g.FONTSIZE))
-        self.image.fill(bg)
-        self.image.blit(fontObj,(0,0),(0,0,g.FONTSIZE//2,g.FONTSIZE))
+          
+        self.tile = tile.Tile(character = self.char,fg = self.fg, bg = self.bg) 
+ 
 
     def take_turn(self):
         if self.move("RIGHT"):

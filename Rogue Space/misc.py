@@ -4,7 +4,7 @@ Created on Mar 10, 2013
 @author: asjoberg
 '''
 import data as g
-import entity
+import entity,pygame
 
 
 def displayMap(playerX,playerY):
@@ -18,9 +18,11 @@ def displayMap(playerX,playerY):
 def displayAt(xTile,yTile,x,y):
 ##    print(yTile,xTile,x,y , )
     if isinstance(g.ENTS[yTile][xTile] , entity.Entity):
-        g.SCREEN.blit(g.ENTS[yTile][xTile].image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+        g.SCREEN.blit(g.ENTS[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    elif g.playMap[yTile][xTile].inventory:
+        g.SCREEN.blit(g.playMap[yTile][xTile].inventory.peek().tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     else:
-        g.SCREEN.blit(g.playMap[yTile][xTile].image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+        g.SCREEN.blit(g.playMap[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     
 def debugMapDisplay():
     for i in range (len(g.playMap)):
@@ -59,3 +61,8 @@ def checkOccupied(direction,x,y):
         return target
     else:
         return None
+
+def printText(txtText, Textfont, Textsize , Textx, Texty, Textcolor = (255,255,255)):
+    myfont = pygame.font.SysFont(Textfont, Textsize)
+    label = myfont.render(txtText, 1, Textcolor)
+    g.SCREEN.blit(label, (Textx, Texty))
