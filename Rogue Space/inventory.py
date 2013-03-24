@@ -37,6 +37,7 @@ class Inventory():
             self.usedLetters += list(newLetter)
         else:
             return False
+            print("Error, adding to full inventory")
         
     def getItem(self,key):
         ret = self.items.pop(key)
@@ -45,6 +46,9 @@ class Inventory():
             self.owner.inventory = None
             
         return ret
+    
+    def isFull(self):
+        return self.letters1.empty() and self.letters2.empty()
     
     def peek(self):
         return self.items[self.usedLetters[0]]
@@ -77,8 +81,14 @@ class Inventory():
         xoffset = 0
         yoffset = 0
         for key in keys:
+            if yoffset >= 19 * (g.FONTSIZE+5):
+                yoffset = 0
+                xoffset += (22 * (g.FONTSIZE//2)) + 5
             misc.printText("- " + key, g.FONTNAME, g.FONTSIZE, startx + xoffset, starty + yoffset)
-            misc.printText(self.items[key].name, g.FONTNAME, g.FONTSIZE, startx + xoffset + g.FONTSIZE, starty + yoffset)
+            itemName = self.items[key].name
+            if len(itemName) > 20:
+                itemName = itemName [:-3] + "..."
+            misc.printText(itemName, g.FONTNAME, g.FONTSIZE, startx + xoffset + g.FONTSIZE, starty + yoffset)
             yoffset += g.FONTSIZE + 5
     
         pygame.display.update()

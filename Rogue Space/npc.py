@@ -31,7 +31,6 @@ class NPC(entity.Entity):
             
         self.bg = bg   
         self.fg = fg
-          
         self.tile = tile.Tile(character = self.char,fg = self.fg, bg = self.bg) 
  
 

@@ -19,6 +19,8 @@ def displayAt(xTile,yTile,x,y):
 ##    print(yTile,xTile,x,y , )
     if isinstance(g.ENTS[yTile][xTile] , entity.Entity):
         g.SCREEN.blit(g.ENTS[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    elif g.playMap[yTile][xTile].component:
+        g.SCREEN.blit(g.playMap[yTile][xTile].component.tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     elif g.playMap[yTile][xTile].inventory:
         g.SCREEN.blit(g.playMap[yTile][xTile].inventory.peek().tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     else:
@@ -33,16 +35,16 @@ def debugMapDisplay():
 def checkMove(direction,x,y):
     
     if direction == "UP":
-        if y == 0 or g.playMap[y-1][x].char not in g.WALKABLES:
+        if y == 0 or not g.playMap[y-1][x].walkable:
             return False
     elif direction == "DOWN":
-        if y == len(g.playMap) or g.playMap[y+1][x].char not in g.WALKABLES:
+        if y == len(g.playMap) or not g.playMap[y+1][x].walkable:
             return False
     elif direction == "LEFT":
-        if x == 0 or g.playMap[y][x-1].char not in g.WALKABLES:
+        if x == 0 or not g.playMap[y][x-1].walkable:
             return False
     elif direction == "RIGHT":
-        if x == len(g.playMap[0]) or g.playMap[y][x+1].char not in g.WALKABLES:
+        if x == len(g.playMap[0]) or not g.playMap[y][x+1].walkable:
             return False
     return True
 

@@ -17,7 +17,7 @@ def enum(*sequential, **named):
 def main():
     playing = True
     timer = gameTime.Timer();
-    pShip = ship.Ship(1)
+    pShip = ship.Ship(3)
     g.ENTS = [[None for i in range(g.MWIDTH)] for j in range(g.MHEIGHT)]
     misc.displayMap(g.MWIDTH//2,g.MHEIGHT//2)
     p = player.Player(g.MWIDTH//2,g.MHEIGHT//2)

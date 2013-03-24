@@ -36,7 +36,6 @@ class Player(entity.Entity):
     ##                print ("Key was" , newEvent.key)
                     if newEvent.unicode == 'q':
                         pygame.quit()
-                        playing = False
                         break
                     elif newEvent.unicode == '.':
                         return 50
@@ -50,16 +49,22 @@ class Player(entity.Entity):
                         else:
                             print("Nothing there")
                             return 0
+                    elif newEvent.unicode == 'a':
+                        print("which direction?")
+                        while True:
+                            for event in pygame.event.get():
+                                if event.key in [273,274,275,276]:
+                                    dir = self.chooseDir(event.key)
+                                    if self.canActivate(dir,self.xPos,self.yPos):
+                                        return self.activate(dir,self.xPos,self.yPos)
+                                    else:
+                                        return 0     
+                                else:
+                                    print("invalid direction")
+                                    return 0
+                        
                     elif newEvent.key in [273,274,275,276]:
-                        if newEvent.key == 273:
-                            dir = "UP"
-                        elif newEvent.key == 274:
-                            dir = "DOWN"
-                        elif newEvent.key == 276:
-                            dir = "LEFT"
-                        elif newEvent.key == 275:
-                            dir = "RIGHT"
-
+                        dir = self.chooseDir(newEvent.key)
                         t = misc.checkOccupied(dir,self.xPos,self.yPos)
                         if isinstance(t,entity.Entity):
                             self.attack(t)
@@ -70,6 +75,31 @@ class Player(entity.Entity):
                 pygame.display.update()
                 return 0
 
+    def canActivate(self,dir,x,y):    
+        if dir == "UP":
+            if y == 0 or not g.playMap[y-1][x].component.usable:
+                return False
+        elif dir == "DOWN":
+            if y == len(g.playMap) or not g.playMap[y+1][x].component.usable:
+                return False
+        elif dir == "LEFT":
+            if x == 0 or not g.playMap[y][x-1].component.usable:
+                return False
+        elif dir == "RIGHT":
+            if x == len(g.playMap[0]) or not g.playMap[y][x+1].component.usable:
+                return False
+        return True
+    
+    def activate(self,dir,x,y):
+        if dir == "UP":
+            return g.playMap[y-1][x].component.execute
+        elif dir == "DOWN":
+            return g.playMap[y+1][x].component.execute
+        elif dir == "LEFT":
+            return g.playMap[y][x-1].component.execute
+        elif dir == "RIGHT":
+            return g.playMap[y][x+1].component.execute
+        
     def move(self,direction):
         if not misc.checkMove(direction,self.xPos,self.yPos):
             print("Can't move there, sorry")
@@ -123,10 +153,15 @@ class Player(entity.Entity):
         return False
     
     def getItems(self):
-        tileInv = g.playMap[self.yPos][self.xPos].inventory
-        for key in list(tileInv.getKeys()):
-            self.inventory.addItem(tileInv.getItem(key))
-        return 100
+        if not self.inventory.isFull():
+            tileInv = g.playMap[self.yPos][self.xPos].inventory
+            for key in list(tileInv.getKeys()):
+                if not self.inventory.isFull():
+                    self.inventory.addItem(tileInv.getItem(key))
+            return 100
+        else:
+            print("Inventory is full")
+            return 0
         
     def onEdge(self,axis,direct):
         if axis == "x":
@@ -138,3 +173,13 @@ class Player(entity.Entity):
                 return True
             return False
 
+    def chooseDir(self,key):
+        if key == 273:
+            dir = "UP"
+        elif key == 274:
+            dir = "DOWN"
+        elif key == 276:
+            dir = "LEFT"
+        elif key == 275:
+            dir = "RIGHT"
+        return dir
