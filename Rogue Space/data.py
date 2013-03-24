@@ -38,7 +38,7 @@ global playMap
 playMap = []
 
 global E
-E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR")
+E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS")
 
 global S
 S=enum("SHIP1","SHIP2")
@@ -46,8 +46,23 @@ S=enum("SHIP1","SHIP2")
 global N
 N = enum("CREWMAN","SLIME","NINJA")
 
+global C
+C = enum("LASER","CONTROL","TELEPAD")
+
+global SG
+SG = enum("FIRE")
+
 global ENTS
 ENTS = []
 
+global BLACK
+BLACK = (0,0,0)
 
+global GREY
+GREY = (140,140,140)
 
+global WHITE
+WHITE = (255,255,255)
+
+global DGREY
+DGREY = (100,100,100)
