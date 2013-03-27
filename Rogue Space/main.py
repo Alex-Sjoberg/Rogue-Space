@@ -10,16 +10,13 @@ pygame.init()
 
 
 
-def enum(*sequential, **named):
-    enums = dict(zip(sequential, range(len(sequential))), **named)
-    return type('Enum', (), enums)
-
 def main():
-    playing = True
     timer = gameTime.Timer();
-    pShip = ship.Ship(3)
+    pShip = ship.Ship(4)
     g.ENTS = [[None for i in range(g.MWIDTH)] for j in range(g.MHEIGHT)]
     misc.displayMap(g.MWIDTH//2,g.MHEIGHT//2)
+    misc.log("Welcome to Rogue Space!")
+    misc.displayUI()
     p = player.Player(g.MWIDTH//2,g.MHEIGHT//2)
     matey = npc.NPC(g.N.CREWMAN,23,17)
     g.ENTS[p.yPos][p.xPos] = p
@@ -27,7 +24,7 @@ def main():
     timer.register(matey)
     pygame.display.update()
     
-    while playing:
+    while True:
         
         timer.tick()
         g.CLOCK.tick(60)

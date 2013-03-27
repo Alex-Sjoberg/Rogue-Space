@@ -25,6 +25,7 @@ class Player(entity.Entity):
 
     def take_turn(self):
         misc.displayMap(self.xDisp,self.yDisp)
+        misc.processMessages()
         while True:
             for newEvent in pygame.event.get():
     ##            print(newEvent.type)
@@ -53,15 +54,16 @@ class Player(entity.Entity):
                         print("which direction?")
                         while True:
                             for event in pygame.event.get():
-                                if event.key in [273,274,275,276]:
-                                    dir = self.chooseDir(event.key)
-                                    if self.canActivate(dir,self.xPos,self.yPos):
-                                        return self.activate(dir,self.xPos,self.yPos)
+                                if event.type == pygame.KEYDOWN:
+                                    if event.key in [273,274,275,276]:
+                                        dir = self.chooseDir(event.key)
+                                        if self.canActivate(dir,self.xPos,self.yPos):
+                                            return self.activate(dir,self.xPos,self.yPos)
+                                        else:
+                                            return 0     
                                     else:
-                                        return 0     
-                                else:
-                                    print("invalid direction")
-                                    return 0
+                                        print("invalid direction")
+                                        return 0
                         
                     elif newEvent.key in [273,274,275,276]:
                         dir = self.chooseDir(newEvent.key)
@@ -75,30 +77,33 @@ class Player(entity.Entity):
                 pygame.display.update()
                 return 0
 
-    def canActivate(self,dir,x,y):    
-        if dir == "UP":
-            if y == 0 or not g.playMap[y-1][x].component.usable:
-                return False
-        elif dir == "DOWN":
-            if y == len(g.playMap) or not g.playMap[y+1][x].component.usable:
-                return False
-        elif dir == "LEFT":
-            if x == 0 or not g.playMap[y][x-1].component.usable:
-                return False
-        elif dir == "RIGHT":
-            if x == len(g.playMap[0]) or not g.playMap[y][x+1].component.usable:
-                return False
-        return True
+    def canActivate(self,dir,x,y):
+        try:    
+            if dir == "UP":
+                if y == 0 or not g.playMap[y-1][x].component.action:
+                    return False
+            elif dir == "DOWN":
+                if y == len(g.playMap) or not g.playMap[y+1][x].component.action:
+                    return False
+            elif dir == "LEFT":
+                if x == 0 or not g.playMap[y][x-1].component.action:
+                    return False
+            elif dir == "RIGHT":
+                if x == len(g.playMap[0]) or not g.playMap[y][x+1].component.action:
+                    return False
+            return True
+        except AttributeError:
+            return False
     
     def activate(self,dir,x,y):
         if dir == "UP":
-            return g.playMap[y-1][x].component.execute
+            return g.playMap[y-1][x].component.execute()
         elif dir == "DOWN":
-            return g.playMap[y+1][x].component.execute
+            return g.playMap[y+1][x].component.execute()
         elif dir == "LEFT":
-            return g.playMap[y][x-1].component.execute
+            return g.playMap[y][x-1].component.execute()
         elif dir == "RIGHT":
-            return g.playMap[y][x+1].component.execute
+            return g.playMap[y][x+1].component.execute()
         
     def move(self,direction):
         if not misc.checkMove(direction,self.xPos,self.yPos):

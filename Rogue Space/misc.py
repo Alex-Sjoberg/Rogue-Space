@@ -14,6 +14,7 @@ def displayMap(playerX,playerY):
         for x in range(g.Xt):
 ##            print (playerY, Yt//2, playerX)
             displayAt(playerX-g.Xt//2 +x, playerY-g.Yt//2 +y,x,y)
+    displayUI()
 
 def displayAt(xTile,yTile,x,y):
 ##    print(yTile,xTile,x,y , )
@@ -64,7 +65,50 @@ def checkOccupied(direction,x,y):
     else:
         return None
 
-def printText(txtText, Textfont, Textsize , Textx, Texty, Textcolor = (255,255,255)):
+def printText(txtText, Textfont, Textsize , Textx, Texty, Textcolor = (255,255,255),surface = g.SCREEN):
     myfont = pygame.font.SysFont(Textfont, Textsize)
     label = myfont.render(txtText, 1, Textcolor)
-    g.SCREEN.blit(label, (Textx, Texty))
+    surface.blit(label, (Textx, Texty))
+
+def printComponents():
+    for comp in g.COMPLIST:
+        print(comp," ",comp.name)
+        
+def log(newMessage):
+    g.MPENDING.append(newMessage)
+    #g.MHISTORY.append(newMessage)
+    
+    printText(newMessage, "Arial" , g.FONTSIZE//2, 0,2, surface = g.LOGDISP)
+
+def processMessages():
+    available = 6
+    if len(g.MPENDING) == 0:
+        return
+    else:
+        pending = logLines(g.MPENDING)
+        numLines = len(pending)
+        ystart = g.LOGDISP.get_height()
+        yoffset = 0
+        for i in range(6 if numLines >= 6 else numLines):
+            printText(pending[-i])
+        
+        
+    g.MHISTORY += g.MPENDING
+def displayUI():
+    g.SCREEN.blit(g.LOGDISP , (0,g.Yt*g.FONTSIZE))
+    pygame.draw.line(g.SCREEN, g.WHITE, (0, (g.Yt)*g.FONTSIZE), ((g.Xt)*g.FONTSIZE//2, (g.Yt)*g.FONTSIZE), 2)
+    pygame.draw.line(g.SCREEN, g.WHITE, ((g.Xt)*g.FONTSIZE//2, 0), ((g.Xt)*g.FONTSIZE//2, g.height), 2)
+    
+def logLines(messages):
+    logLines = []
+    for line in messages:
+        while len(line) // 30 != 0:
+            logLines.append(line[:30])
+            line = line[30:]
+        logLines.append(line)
+        
+
+def redraw():
+    displayMap()
+    displayUI()
+    

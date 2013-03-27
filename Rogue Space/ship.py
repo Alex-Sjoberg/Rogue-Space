@@ -1,5 +1,7 @@
 import data as g
 import environ
+import misc
+import component as comp
 
 class Ship():
     def __init__(self,model):
@@ -50,15 +52,27 @@ class Ship():
             [g.E.WALL1,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.WALL1,g.E.SPACE],
             [g.E.WALL1,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.WALL1,g.E.SPACE],
             [g.E.WALL1,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.FLOOR,g.E.WALL1,g.E.SPACE],
-            [g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE]
-               
-                           
-                           
-                           
-                           
-                           
+            [g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE]          
                            
                            ])
+        elif model == 4:
+            self.makeShip([
+                [g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
+                [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
+                [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
+                [g.E.SPACE,g.E.ENGNE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
+                [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.FLOOR,g.E.CTRLS,g.E.WALL1,g.E.LASER],
+                [g.E.SPACE,g.E.ENGNE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
+                [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
+                [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
+                [g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
+                
+                  ])
+            misc.printComponents()
+            g.COMPLIST[1].action.link(g.COMPLIST[2].action,description = "Fire main laser")
+            g.COMPLIST[1].action.link(g.COMPLIST[2].action,1,description = "Fire main laser heroically")
+            g.COMPLIST[1].action.link(comp.MultiAction(g.COMPLIST[0].action , g.COMPLIST[3].action) , 0 , description = "Rev the engines")
+            self.speed = 0
             
     def makeShip(self,text):
         g.MWIDTH

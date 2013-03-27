@@ -27,11 +27,16 @@ class Environ():
             self.component = comp.Component(type = g.C.LASER)
         elif type == g.E.CTRLS:
             self.char = "\u002B"
-            self.component = comp.Component(type = g.C.CONTROL, fireable = comp.Fireable)
+            self.component = comp.Component(type = g.C.CONTROL)
+        elif type == g.E.ENGNE:
+            self.char = "."
+            self.component = comp.Component(type = g.C.ENGINE)
         else:
             self.bg = (0,0,0)
             self.char = "?"
-                   
+            
+        if self.component:
+            g.COMPLIST.append(self.component)           
         self.tile = tile.Tile(character = self.char , bg = self.bg , fg = self.fg)
         
     def activate(self):

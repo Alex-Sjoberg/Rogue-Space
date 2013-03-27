@@ -8,10 +8,9 @@ def enum(*sequential, **named):
 FONTNAME = "DwarfFortressVan.ttf"
 
 global FONTSIZE
-FONTSIZE = 24
+FONTSIZE = 22
 
-global WALKABLES
-WALKABLES = ["\u00B7",'\u00AA']
+
 
 global Xt
 Xt = 50
@@ -20,7 +19,7 @@ global Yt
 Yt = Xt//2
 
 global size, width, height
-size = width, height = (Xt*FONTSIZE + 10, Yt*FONTSIZE + 5)
+size = width, height = (Xt*FONTSIZE + 10, Yt*FONTSIZE + FONTSIZE *6)
 
 global SCREEN
 SCREEN = pygame.display.set_mode(size)
@@ -38,7 +37,7 @@ global playMap
 playMap = []
 
 global E
-E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS")
+E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE")
 
 global S
 S=enum("SHIP1","SHIP2")
@@ -47,7 +46,7 @@ global N
 N = enum("CREWMAN","SLIME","NINJA")
 
 global C
-C = enum("LASER","CONTROL","TELEPAD")
+C = enum("LASER","CONTROL","TELEPAD","ENGINE")
 
 global SG
 SG = enum("FIRE")
@@ -66,3 +65,15 @@ WHITE = (255,255,255)
 
 global DGREY
 DGREY = (100,100,100)
+
+global COMPLIST
+COMPLIST = []
+
+global MHISTORY
+MHISTORY = []
+
+global MPENDING
+MPENDING = []
+
+global LOGDISP
+LOGDISP = pygame.Surface( ((Xt*FONTSIZE)//2 , FONTSIZE*6) )
