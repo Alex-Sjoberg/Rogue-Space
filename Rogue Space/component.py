@@ -56,10 +56,10 @@ class Fire(CAction):
         
     def execute(self,actionNum = 0):
         if actionNum == 0:
-            print("I'm firin the laser")
+            misc.log("I'm firin the laser")
             return 50
         else:
-            print("I'm firin the laser heroically")
+            misc.log("I'm firing the laser heroically")
             return 50
                 
 class Engine():
@@ -67,7 +67,8 @@ class Engine():
         pass
         
     def execute(self,actionNum = 0, *params):
-        print("engining")
+        misc.log("engining")
+
         return 50
                 
 class ActMenu(CAction):
@@ -75,7 +76,10 @@ class ActMenu(CAction):
         self.actions = actions
         
     def execute(self,actionNum = 0):
-        if len(self.actions) <= 1:
+        if len (self.actions) == 0:
+            misc.log("Its not working!")
+            return 0
+        if len(self.actions) == 1:
             return self.actions[0].execute()
         else: ##display menu of possible actions
             g.SCREEN.fill((0,0,0))
@@ -129,4 +133,6 @@ class MultiAction(CAction):
             
     def addAction(self,action):
         self.actions.append(action)
+        
+    
         

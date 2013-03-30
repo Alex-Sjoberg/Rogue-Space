@@ -25,7 +25,6 @@ class Player(entity.Entity):
 
     def take_turn(self):
         misc.displayMap(self.xDisp,self.yDisp)
-        misc.processMessages()
         while True:
             for newEvent in pygame.event.get():
     ##            print(newEvent.type)
@@ -48,10 +47,10 @@ class Player(entity.Entity):
                         if self.itemHere():
                             return self.getItems()
                         else:
-                            print("Nothing there")
+                            misc.logNow("Nothing there")
                             return 0
                     elif newEvent.unicode == 'a':
-                        print("which direction?")
+                        misc.logNow("Which direction?")
                         while True:
                             for event in pygame.event.get():
                                 if event.type == pygame.KEYDOWN:
@@ -60,9 +59,10 @@ class Player(entity.Entity):
                                         if self.canActivate(dir,self.xPos,self.yPos):
                                             return self.activate(dir,self.xPos,self.yPos)
                                         else:
+                                            misc.logNow("Can't activate that")
                                             return 0     
                                     else:
-                                        print("invalid direction")
+                                        misc.logNow("Invalid direction")
                                         return 0
                         
                     elif newEvent.key in [273,274,275,276]:
@@ -75,7 +75,6 @@ class Player(entity.Entity):
                             return 100
                 
                 pygame.display.update()
-                return 0
 
     def canActivate(self,dir,x,y):
         try:    
@@ -107,7 +106,7 @@ class Player(entity.Entity):
         
     def move(self,direction):
         if not misc.checkMove(direction,self.xPos,self.yPos):
-            print("Can't move there, sorry")
+            misc.logNow("Can't move there")
             return False
         g.SCREEN.fill((0,0,0),self.pos)
         g.SCREEN.blit(g.playMap[self.yPos][self.xPos].tile.image , self.pos)
@@ -120,7 +119,7 @@ class Player(entity.Entity):
             else:
                 self.yPos-=1
                 self.yDisp-=1
-                misc.displayMap(self.xDisp,self.yDisp)
+                #misc.displayMap(self.xDisp,self.yDisp)
 
         elif direction == "DOWN":
             if self.onEdge("y",+1):
@@ -129,7 +128,7 @@ class Player(entity.Entity):
             else:
                 self.yPos+=1
                 self.yDisp+=1
-                misc.displayMap(self.xDisp,self.yDisp)
+                #misc.displayMap(self.xDisp,self.yDisp)
             
         elif direction == "LEFT":
             if self.onEdge("x",-1):
@@ -138,7 +137,7 @@ class Player(entity.Entity):
             else:
                 self.xPos-=1
                 self.xDisp-=1
-                misc.displayMap(self.xDisp,self.yDisp)
+                #misc.displayMap(self.xDisp,self.yDisp)
             
         elif direction == "RIGHT":
             if self.onEdge("x",+1):
@@ -147,7 +146,7 @@ class Player(entity.Entity):
             else:
                 self.xPos+=1
                 self.xDisp+=1
-                misc.displayMap(self.xDisp,self.yDisp)
+                #misc.displayMap(self.xDisp,self.yDisp)
         g.ENTS[self.yPos][self.xPos] = self
         g.SCREEN.blit(self.tile.image, self.pos)
 
@@ -165,7 +164,7 @@ class Player(entity.Entity):
                     self.inventory.addItem(tileInv.getItem(key))
             return 100
         else:
-            print("Inventory is full")
+            misc.logNow("Inventory is full")
             return 0
         
     def onEdge(self,axis,direct):

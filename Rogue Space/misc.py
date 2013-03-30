@@ -5,6 +5,7 @@ Created on Mar 10, 2013
 '''
 import data as g
 import entity,pygame
+import math
 
 
 def displayMap(playerX,playerY):
@@ -76,39 +77,114 @@ def printComponents():
         
 def log(newMessage):
     g.MPENDING.append(newMessage)
-    #g.MHISTORY.append(newMessage)
-    
-    printText(newMessage, "Arial" , g.FONTSIZE//2, 0,2, surface = g.LOGDISP)
+
+def logNow(newMessage):
+    g.MPENDING.append(newMessage)
+    processMessages()
 
 def processMessages():
-    available = 6
+    print("messages")
     if len(g.MPENDING) == 0:
+        displayLog()
         return
-    else:
-        pending = logLines(g.MPENDING)
-        numLines = len(pending)
-        ystart = g.LOGDISP.get_height()
-        yoffset = 0
-        for i in range(6 if numLines >= 6 else numLines):
-            printText(pending[-i])
+    g.MPENDING = logLines(g.MPENDING)
+    numLines = len(g.MPENDING)
+    ystart = g.LOGDISP.get_height() - g.FONTSIZE
+    
+##Keep going until out of new lines to display
+    while True:
+        g.LOGDISP.fill(g.BLACK) #blank the message log
+        yoffset = 0    
+        available = 6
+        numLines = len(g.MPENDING) #see how many new lines need to be displayed
         
+        if numLines > available:#if its more than a single screen
+            
+            print("Pending:" , g.MPENDING)
+            g.MHISTORY += g.MPENDING[:available - 1]#add appropriate number to 
+            g.MPENDING = g.MPENDING[available - 1:]
+            g.MHISTORY.append("--More--")
+            
+            for i in range(1, available+1 if len(g.MHISTORY) >= available else len(g.MHISTORY)+1):
+                print(i," From history",g.MHISTORY[-i])
+                printText(g.MHISTORY[-i], "Courier", g.MSGSIZE, 0, ystart + yoffset, surface = g.LOGDISP)
+                yoffset -= g.FONTSIZE            
+            
+            displayLog()
+            pygame.display.update()
+            
+            waiting = True
+            while waiting:
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        waiting = False        
+            
+        else: 
+            g.MHISTORY += g.MPENDING
+            g.MPENDING.clear()
+            for i in range(1, available+1 if len(g.MHISTORY) >= available else len(g.MHISTORY)+1):
+                print(i," From history",g.MHISTORY[-i])
+                printText(g.MHISTORY[-i], "Courier", g.MSGSIZE, 0, ystart + yoffset, surface = g.LOGDISP)
+                yoffset -= g.FONTSIZE  
+            displayLog()
+            pygame.display.update()               
+            break
         
-    g.MHISTORY += g.MPENDING
+            
+
+              
+        if len(g.MPENDING) == 0:
+            break 
+
+        
+    
 def displayUI():
-    g.SCREEN.blit(g.LOGDISP , (0,g.Yt*g.FONTSIZE))
     pygame.draw.line(g.SCREEN, g.WHITE, (0, (g.Yt)*g.FONTSIZE), ((g.Xt)*g.FONTSIZE//2, (g.Yt)*g.FONTSIZE), 2)
     pygame.draw.line(g.SCREEN, g.WHITE, ((g.Xt)*g.FONTSIZE//2, 0), ((g.Xt)*g.FONTSIZE//2, g.height), 2)
+    processMessages()
+    displayMinimap()
+    
+def displayLog():
+    g.SCREEN.blit(g.LOGDISP , (2,g.Yt*g.FONTSIZE+2))
     
 def logLines(messages):
     logLines = []
+    #maxLineLen = (g.LOGDISP.get_width() // g.MSGSIZE)
+    maxLineLen = 67
     for line in messages:
-        while len(line) // 30 != 0:
-            logLines.append(line[:30])
-            line = line[30:]
+        while len(line) // (maxLineLen+1) != 0:
+            logLines.append(line[:maxLineLen-1])
+            line = line[maxLineLen:]
         logLines.append(line)
+    return logLines
+
+def initMinimap():
+    for y in range (len(g.MINIMAP)):
+        for x in range (len(g.MINIMAP[0])):
+            g.MINIDISP.blit( g.MINIMAP[y][x].image , (x*g.MINISIZE//2 , y*g.MINISIZE))
+            
+    
+def displayMinimap():
+    print("displaying minimap")
+    print(g.Xt*g.FONTSIZE)
+    g.SCREEN.blit(g.MINIDISP, (g.Xt*g.FONTSIZE//2 + 5, 2) )
         
 
-def redraw():
-    displayMap()
+def redraw(xPos,yPos,map = g.playMap):
+    displayMap(xPos, yPos, map)
     displayUI()
+    
+def distance(p1,p2):
+    return math.sqrt( (p2[0] - p1[0])**2 + (p2[1] - p2[1])**2 )
+
+def midpoint(p1,p2):
+    return ( ((p1[0]+p2[0]) // 2) , ((p1[1] + p2[1]) // 2) )
+
+def xdif(x1,x2):
+    return x2 -x1
+
+def ydif(y1,y2):
+    return y2-y1
+
+
     

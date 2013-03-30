@@ -8,15 +8,25 @@ def enum(*sequential, **named):
 FONTNAME = "DwarfFortressVan.ttf"
 
 global FONTSIZE
-FONTSIZE = 22
+FONTSIZE = 32
 
+global MSGSIZE
+MSGSIZE = 20
 
+global MINISIZE
+MINISIZE = 20
 
 global Xt
 Xt = 50
 
 global Yt
 Yt = Xt//2
+
+global MXt
+MXt = 25
+
+global MYt
+MYt = 25
 
 global size, width, height
 size = width, height = (Xt*FONTSIZE + 10, Yt*FONTSIZE + FONTSIZE *6)
@@ -76,4 +86,12 @@ global MPENDING
 MPENDING = []
 
 global LOGDISP
-LOGDISP = pygame.Surface( ((Xt*FONTSIZE)//2 , FONTSIZE*6) )
+LOGDISP = pygame.Surface( ((Xt*FONTSIZE)//2 - 2 , FONTSIZE*6 - 2) )
+
+import tile
+
+global MINIMAP
+MINIMAP = [  [tile.Tile(character = ".",fontsize = MINISIZE) for i in range (MXt)] for i in range (MYt) ]
+
+global MINIDISP
+MINIDISP = pygame.Surface( (MXt*MINISIZE//2 , MYt*MINISIZE)  )
