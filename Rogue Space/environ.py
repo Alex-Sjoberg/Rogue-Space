@@ -1,4 +1,4 @@
-import pygame,inventory,item,tile
+import pygame,inventory,item,tile,random
 import component as comp
 import data as g
 
@@ -21,16 +21,30 @@ class Environ():
             self.walkable = True
             ##self.inventory = inventory.Inventory(self,item.Item(),item.Item())
         elif type == g.E.SPACE:
-            self.char = "."
+            x = random.randrange(100)
+            if x <= 90:
+                self.char = " "
+            elif x < 93:
+                self.char = "."
+            elif x < 96:
+                self.char = ","
+            elif x < 99:
+                self.char = "'"
+            else:
+                self.char = "*"
+
         elif type == g.E.LASER:
-            self.char = "\u002B"
+            self.char = " "
             self.component = comp.Component(type = g.C.LASER)
         elif type == g.E.CTRLS:
             self.char = "\u002B"
             self.component = comp.Component(type = g.C.CONTROL)
         elif type == g.E.ENGNE:
-            self.char = "."
+            self.char = " "
             self.component = comp.Component(type = g.C.ENGINE)
+        elif type == g.E.SNSOR:
+            self.char = "\u002B"
+            self.component = comp.Component(type = g.C.SENSOR)
         else:
             self.bg = (0,0,0)
             self.char = "?"

@@ -27,6 +27,11 @@ class Component():
             self.char = "\u00cb"
             self.action = Engine()
             self.name = "Engine"
+            
+        elif type == g.C.SENSOR:
+            self.char = "O"
+            self.action = Sensor(self)
+            self.name = "Sensor"
                 
         self.type = type    
         self.tile = tile.Tile(character = self.char)
@@ -121,7 +126,7 @@ class Signal(CAction):
     def execute(self,*params):
         return self.target.execute(self.actionNum, *params)
     
-class MultiAction(CAction):
+class MultiAction(CAction):## for executing multiple component's actions with a single command
     def __init__(self,*actions):
         self.actions = list(actions)
         
@@ -134,5 +139,17 @@ class MultiAction(CAction):
     def addAction(self,action):
         self.actions.append(action)
         
-    
+class Sensor(CAction):
+    def __init__(self,owner,description = "Use the sensors"):
+        self.owner = owner
+        self.description = description
+        
+    def execute(self,actionNum = 0 , *params):
+        print(g.SHIPS)
+        toView = g.SHIPS[actionNum]
+        misc.displayMap(toView.width//2, toView.height//2, toView)
+        pygame.display.update()
+        input()
+        return 10
+            
         

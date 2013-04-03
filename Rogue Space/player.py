@@ -4,15 +4,15 @@ import pygame,misc,entity,inventory,tile
 
 
 class Player(entity.Entity):
-    def __init__(self,x,y):
-        
+    def __init__(self,x,y,ship):
+        super().__init__(ship = ship)
         self.tile = tile.Tile(character = "@")
 
             
         self.pos = self.tile.image.get_rect().move(g.Xt//2*(g.FONTSIZE//2),g.Yt//2*g.FONTSIZE)
         
-        self.xPos = len(g.playMap[0])//2
-        self.yPos = len(g.playMap)//2
+        self.xPos = len(self.ship.map[0])//2
+        self.yPos = len(self.ship.map)//2
         self.xDisp = self.xPos
         self.yDisp = self.yPos
 
@@ -22,9 +22,8 @@ class Player(entity.Entity):
         g.SCREEN.blit(self.tile.image,self.pos)
         
         self.inventory = inventory.Inventory(self)
-
     def take_turn(self):
-        misc.displayMap(self.xDisp,self.yDisp)
+        misc.displayMap(self.xDisp,self.yDisp,self.ship)
         while True:
             for newEvent in pygame.event.get():
     ##            print(newEvent.type)
@@ -41,7 +40,7 @@ class Player(entity.Entity):
                         return 50
                     elif newEvent.unicode == 'i':
                         self.inventory.examine()
-                        misc.displayMap(self.xDisp,self.yDisp)
+                        misc.displayMap(self.xDisp,self.yDisp,self.ship)
                         return 0
                     elif newEvent.unicode == ',':
                         if self.itemHere():
@@ -67,7 +66,7 @@ class Player(entity.Entity):
                         
                     elif newEvent.key in [273,274,275,276]:
                         dir = self.chooseDir(newEvent.key)
-                        t = misc.checkOccupied(dir,self.xPos,self.yPos)
+                        t = misc.checkOccupied(dir,self.xPos,self.yPos,self.ship)
                         if isinstance(t,entity.Entity):
                             self.attack(t)
                             return 200
@@ -79,16 +78,16 @@ class Player(entity.Entity):
     def canActivate(self,dir,x,y):
         try:    
             if dir == "UP":
-                if y == 0 or not g.playMap[y-1][x].component.action:
+                if y == 0 or not self.ship.map[y-1][x].component.action:
                     return False
             elif dir == "DOWN":
-                if y == len(g.playMap) or not g.playMap[y+1][x].component.action:
+                if y == len(self.ship.map) or not self.ship.map[y+1][x].component.action:
                     return False
             elif dir == "LEFT":
-                if x == 0 or not g.playMap[y][x-1].component.action:
+                if x == 0 or not self.ship.map[y][x-1].component.action:
                     return False
             elif dir == "RIGHT":
-                if x == len(g.playMap[0]) or not g.playMap[y][x+1].component.action:
+                if x == len(self.ship.map[0]) or not self.ship.map[y][x+1].component.action:
                     return False
             return True
         except AttributeError:
@@ -96,21 +95,21 @@ class Player(entity.Entity):
     
     def activate(self,dir,x,y):
         if dir == "UP":
-            return g.playMap[y-1][x].component.execute()
+            return self.ship.map[y-1][x].component.execute()
         elif dir == "DOWN":
-            return g.playMap[y+1][x].component.execute()
+            return self.ship.map[y+1][x].component.execute()
         elif dir == "LEFT":
-            return g.playMap[y][x-1].component.execute()
+            return self.ship.map[y][x-1].component.execute()
         elif dir == "RIGHT":
-            return g.playMap[y][x+1].component.execute()
+            return self.ship.map[y][x+1].component.execute()
         
     def move(self,direction):
-        if not misc.checkMove(direction,self.xPos,self.yPos):
+        if not misc.checkMove(direction,self.xPos,self.yPos,self.ship):
             misc.logNow("Can't move there")
             return False
         g.SCREEN.fill((0,0,0),self.pos)
-        g.SCREEN.blit(g.playMap[self.yPos][self.xPos].tile.image , self.pos)
-        g.ENTS[self.yPos][self.xPos] = None
+        g.SCREEN.blit(self.ship.map[self.yPos][self.xPos].tile.image , self.pos)
+        self.ship.entMap[self.yPos][self.xPos] = None
         
         if direction == "UP":
             if self.onEdge("y",-1):
@@ -119,7 +118,6 @@ class Player(entity.Entity):
             else:
                 self.yPos-=1
                 self.yDisp-=1
-                #misc.displayMap(self.xDisp,self.yDisp)
 
         elif direction == "DOWN":
             if self.onEdge("y",+1):
@@ -128,7 +126,6 @@ class Player(entity.Entity):
             else:
                 self.yPos+=1
                 self.yDisp+=1
-                #misc.displayMap(self.xDisp,self.yDisp)
             
         elif direction == "LEFT":
             if self.onEdge("x",-1):
@@ -137,7 +134,6 @@ class Player(entity.Entity):
             else:
                 self.xPos-=1
                 self.xDisp-=1
-                #misc.displayMap(self.xDisp,self.yDisp)
             
         elif direction == "RIGHT":
             if self.onEdge("x",+1):
@@ -146,19 +142,18 @@ class Player(entity.Entity):
             else:
                 self.xPos+=1
                 self.xDisp+=1
-                #misc.displayMap(self.xDisp,self.yDisp)
-        g.ENTS[self.yPos][self.xPos] = self
+        self.ship.entMap[self.yPos][self.xPos] = self
         g.SCREEN.blit(self.tile.image, self.pos)
 
         return True
     def itemHere(self):
-        if g.playMap[self.yPos][self.xPos].inventory:
+        if self.ship.map[self.yPos][self.xPos].inventory:
             return True
         return False
     
     def getItems(self):
         if not self.inventory.isFull():
-            tileInv = g.playMap[self.yPos][self.xPos].inventory
+            tileInv = self.ship.map[self.yPos][self.xPos].inventory
             for key in list(tileInv.getKeys()):
                 if not self.inventory.isFull():
                     self.inventory.addItem(tileInv.getItem(key))
@@ -169,11 +164,11 @@ class Player(entity.Entity):
         
     def onEdge(self,axis,direct):
         if axis == "x":
-            if ((self.xPos - g.Xt//2) <= 0 or (self.xPos +g.Xt//2) >= len(g.playMap[0])) and ((self.xPos - g.Xt//2 +direct) <= 0 or (self.xPos +g.Xt//2 +direct) >= len(g.playMap[0])):
+            if ((self.xPos - g.Xt//2) <= 0 or (self.xPos +g.Xt//2) >= len(self.ship.map[0])) and ((self.xPos - g.Xt//2 +direct) <= 0 or (self.xPos +g.Xt//2 +direct) >= len(self.ship.map[0])):
                 return True
             return False
         else:
-            if ((self.yPos -g.Yt//2) <= 0 or (self.yPos + g.Yt//2 ) >= len(g.playMap)-1) and ((self.yPos -g.Yt//2+direct) <= 0 or (self.yPos + g.Yt//2 + direct) >= len(g.playMap)-1):
+            if ((self.yPos -g.Yt//2) <= 0 or (self.yPos + g.Yt//2 ) >= len(self.ship.map)-1) and ((self.yPos -g.Yt//2+direct) <= 0 or (self.yPos + g.Yt//2 + direct) >= len(self.ship.map)-1):
                 return True
             return False
 

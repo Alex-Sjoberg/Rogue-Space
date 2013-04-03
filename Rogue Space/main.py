@@ -9,19 +9,20 @@ import npc
 pygame.init()
 
 
-
 def main():
     misc.initMinimap()
     timer = gameTime.Timer();
-    pShip = ship.Ship(1)
-    g.ENTS = [[None for i in range(g.MWIDTH)] for j in range(g.MHEIGHT)]
+    g.CURSHIP = pShip = ship.Ship(4)
+    eship1 = ship.Ship(2)
+    eship2 = ship.Ship(1)
+    #g.ENTS = [[None for i in range(g.MWIDTH)] for j in range(g.MHEIGHT)]
     
     misc.log("Welcome to Rogue Space!")
     #misc.log("This should be the second message to be displayed and it should be way too long so it is on multiple linesaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaSO MANY LINES THAT IT NEEDS TWO WHOLE SCREENS!!!!!!! WHOOOOOAAAAAA NO WAY MAN!!!!! THATS SO COOL! I KNOW RIGHT ISNT IT SO COLL I HAVE TO PAD THIS STUPID STRING OS MUCH!!!!!!!!!!!!!!!!!!!!")
     
-    p = player.Player(g.MWIDTH//2,g.MHEIGHT//2)
-    matey = npc.NPC(g.N.CREWMAN,23,17)
-    g.ENTS[p.yPos][p.xPos] = p
+    p = player.Player(g.MWIDTH//2,g.MHEIGHT//2,ship = pShip)
+    matey = npc.NPC(g.N.CREWMAN,23,17,eship1)
+    pShip.entMap[p.yPos][p.xPos] = p
     timer.register(p)
     timer.register(matey)
     pygame.display.update()

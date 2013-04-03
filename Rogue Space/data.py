@@ -47,7 +47,7 @@ global playMap
 playMap = []
 
 global E
-E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE")
+E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE","SNSOR")
 
 global S
 S=enum("SHIP1","SHIP2")
@@ -56,7 +56,7 @@ global N
 N = enum("CREWMAN","SLIME","NINJA")
 
 global C
-C = enum("LASER","CONTROL","TELEPAD","ENGINE")
+C = enum("LASER","CONTROL","TELEPAD","ENGINE","SENSOR")
 
 global SG
 SG = enum("FIRE")
@@ -95,3 +95,12 @@ MINIMAP = [  [tile.Tile(character = ".",fontsize = MINISIZE) for i in range (MXt
 
 global MINIDISP
 MINIDISP = pygame.Surface( (MXt*MINISIZE//2 , MYt*MINISIZE)  )
+
+global MAPDISP
+MAPDISP = pygame.Surface((Xt * FONTSIZE , Yt * FONTSIZE))
+
+global CURSHIP
+CURSHIP = None
+
+global SHIPS
+SHIPS = []

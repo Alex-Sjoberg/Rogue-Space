@@ -4,8 +4,16 @@ import misc
 import component as comp
 
 class Ship():
-    def __init__(self,model):
+    def __init__(self,model,x = 100,y = 100):
         self.type = model
+        self.xPos = x
+        self.yPos = y
+        self.speed = 10
+        self.map = []
+        self.entMap = []
+        self.width = 0
+        self.height = 0
+        
         if model == 1:
             self.makeShip([
                 [g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
@@ -61,23 +69,26 @@ class Ship():
                 [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
                 [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
                 [g.E.SPACE,g.E.ENGNE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
-                [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.FLOOR,g.E.CTRLS,g.E.WALL1,g.E.LASER],
+                [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.SNSOR,g.E.WALL1,g.E.WALL1,g.E.FLOOR,g.E.CTRLS,g.E.WALL1,g.E.LASER],
                 [g.E.SPACE,g.E.ENGNE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
                 [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
                 [g.E.SPACE,g.E.SPACE,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE,g.E.SPACE],
                 [g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.WALL1,g.E.SPACE],
                 
                   ])
+            
             misc.printComponents()
-            g.COMPLIST[1].action.link(g.COMPLIST[2].action,description = "Fire main laser")
-            g.COMPLIST[1].action.link(g.COMPLIST[2].action,1,description = "Fire main laser heroically")
-            g.COMPLIST[1].action.link(comp.MultiAction(g.COMPLIST[0].action , g.COMPLIST[3].action) , 0 , description = "Rev the engines")
-            self.speed = 0
+            g.COMPLIST[2].action.link(g.COMPLIST[3].action,description = "Fire main laser")
+            g.COMPLIST[2].action.link(g.COMPLIST[3].action,1,description = "Fire main laser heroically")
+            g.COMPLIST[2].action.link(comp.MultiAction(g.COMPLIST[0].action , g.COMPLIST[4].action) , 0 , description = "Rev the engines")
+            g.COMPLIST[2].action.link(g.COMPLIST[1].action,0,description = "View enemy ship 1" )
+            g.COMPLIST[2].action.link(g.COMPLIST[1].action,1,description = "View enemy ship 2" )
+
             
     def makeShip(self,text):
         g.MWIDTH
         g.MHEIGHT
-
+        g.SHIPS.append(self)
         width = len(text[0])
         height = len(text)
         xfiller = yfiller = 5
@@ -90,18 +101,22 @@ class Ship():
             height = g.Yt 
         
         for i in range(yfiller):## top filler stars
-            g.playMap.append([environ.Environ(g.E.SPACE) for i in range(width+10)])   
+            self.map.append([environ.Environ(g.E.SPACE) for i in range(width+10)])   
         for y in range(len(text)):
-            g.playMap.append([])##new y row
+            self.map.append([])##new y row
             for i in range(xfiller):##left filler
-                g.playMap[y+yfiller].append(environ.Environ(g.E.SPACE))
+                self.map[y+yfiller].append(environ.Environ(g.E.SPACE))
             for x in range(len(text[0])):#content
-                g.playMap[y+yfiller].append(environ.Environ(text[y][x]))
+                self.map[y+yfiller].append(environ.Environ(text[y][x]))
                 
             for i in range(xfiller):#right filler
-                g.playMap[y+yfiller].append(environ.Environ(g.E.SPACE))
+                self.map[y+yfiller].append(environ.Environ(g.E.SPACE))
         for i in range(yfiller):# bottom filler stars
-            g.playMap.append([environ.Environ(g.E.SPACE) for i in range(width+10)])
+            self.map.append([environ.Environ(g.E.SPACE) for i in range(width+10)])
         
-        g.MWIDTH = width+10
-        g.MHEIGHT = height+10
+        self.width = g.MWIDTH = width+10
+        self.height = g.MHEIGHT = height+10
+        
+        self.entMap = [[None for i in range(self.width)] for j in range(self.height)]
+
+        

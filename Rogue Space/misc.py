@@ -8,60 +8,61 @@ import entity,pygame
 import math
 
 
-def displayMap(playerX,playerY):
+def displayMap(playerX,playerY, ship = g.CURSHIP):
 ##    debugMapDisplay()
-    g.SCREEN.fill((0,0,0))
+    print(g.CURSHIP)
+    g.MAPDISP.fill((0,0,0))
     for y in range(g.Yt):
         for x in range(g.Xt):
 ##            print (playerY, Yt//2, playerX)
-            displayAt(playerX-g.Xt//2 +x, playerY-g.Yt//2 +y,x,y)
+            displayAt(playerX-g.Xt//2 +x, playerY-g.Yt//2 +y,x,y,ship)
     displayUI()
 
-def displayAt(xTile,yTile,x,y):
+def displayAt(xTile,yTile,x,y,ship):
 ##    print(yTile,xTile,x,y , )
-    if isinstance(g.ENTS[yTile][xTile] , entity.Entity):
-        g.SCREEN.blit(g.ENTS[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
-    elif g.playMap[yTile][xTile].component:
-        g.SCREEN.blit(g.playMap[yTile][xTile].component.tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
-    elif g.playMap[yTile][xTile].inventory:
-        g.SCREEN.blit(g.playMap[yTile][xTile].inventory.peek().tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    if isinstance(ship.entMap[yTile][xTile] , entity.Entity):
+        g.SCREEN.blit(ship.entMap[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    elif ship.map[yTile][xTile].component:
+        g.SCREEN.blit(ship.map[yTile][xTile].component.tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    elif ship.map[yTile][xTile].inventory:
+        g.SCREEN.blit(ship.map[yTile][xTile].inventory.peek().tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     else:
-        g.SCREEN.blit(g.playMap[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+        g.SCREEN.blit(ship.map[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     
-def debugMapDisplay():
-    for i in range (len(g.playMap)):
+def debugMapDisplay(ship):
+    for i in range (len(ship.map)):
         print()
-        for j in range(len(g.playMap[15])):
-            print(g.playMap[i][j].char,end = '')
+        for j in range(len(ship.map[15])):
+            print(ship.map[i][j].char,end = '')
             
-def checkMove(direction,x,y):
+def checkMove(direction,x,y,ship):
     
     if direction == "UP":
-        if y == 0 or not g.playMap[y-1][x].walkable:
+        if y == 0 or not ship.map[y-1][x].walkable:
             return False
     elif direction == "DOWN":
-        if y == len(g.playMap) or not g.playMap[y+1][x].walkable:
+        if y == len(ship.map) or not ship.map[y+1][x].walkable:
             return False
     elif direction == "LEFT":
-        if x == 0 or not g.playMap[y][x-1].walkable:
+        if x == 0 or not ship.map[y][x-1].walkable:
             return False
     elif direction == "RIGHT":
-        if x == len(g.playMap[0]) or not g.playMap[y][x+1].walkable:
+        if x == len(ship.map[0]) or not ship.map[y][x+1].walkable:
             return False
     return True
 
-def checkOccupied(direction,x,y):
+def checkOccupied(direction,x,y,ship):
     
     if direction == "UP":
-        target = g.ENTS[y-1][x]
+        target = ship.entMap[y-1][x]
     elif direction == "DOWN":
-        target = g.ENTS[y+1][x]
+        target = ship.entMap[y+1][x]
     elif direction == "LEFT":
-        target = g.ENTS[y][x-1]
+        target = ship.entMap[y][x-1]
     elif direction == "RIGHT":
-        target = g.ENTS[y][x+1]
+        target = ship.entMap[y][x+1]
         
-    if isinstance(target  , entity.Entity):
+    if isinstance(target, entity.Entity):
         return target
     else:
         return None
@@ -170,8 +171,8 @@ def displayMinimap():
     g.SCREEN.blit(g.MINIDISP, (g.Xt*g.FONTSIZE//2 + 5, 2) )
         
 
-def redraw(xPos,yPos,map = g.playMap):
-    displayMap(xPos, yPos, map)
+def redraw(xPos,yPos,ship):
+    displayMap(xPos, yPos, ship)
     displayUI()
     
 def distance(p1,p2):
