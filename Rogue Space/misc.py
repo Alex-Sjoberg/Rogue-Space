@@ -4,13 +4,13 @@ Created on Mar 10, 2013
 @author: asjoberg
 '''
 import data as g
-import entity,pygame
+import entity,pygame,fractions
 import math
 
 
 def displayMap(playerX,playerY, ship = g.CURSHIP):
 ##    debugMapDisplay()
-    print(g.CURSHIP)
+
     g.MAPDISP.fill((0,0,0))
     for y in range(g.Yt):
         for x in range(g.Xt):
@@ -72,8 +72,8 @@ def printText(txtText, Textfont, Textsize , Textx, Texty, Textcolor = (255,255,2
     label = myfont.render(txtText, 1, Textcolor)
     surface.blit(label, (Textx, Texty))
 
-def printComponents():
-    for comp in g.COMPLIST:
+def printComponents(ship):
+    for comp in ship.components:
         print(comp," ",comp.name)
         
 def log(newMessage):
@@ -84,7 +84,6 @@ def logNow(newMessage):
     processMessages()
 
 def processMessages():
-    print("messages")
     if len(g.MPENDING) == 0:
         displayLog()
         return
@@ -159,27 +158,36 @@ def logLines(messages):
         logLines.append(line)
     return logLines
 
-def initMinimap():
+def makeMinimap():
+    shipCoords = []
+    for ship in g.SHIPS:
+        shipCoords.append( (ship.xPos,ship.yPos) )
+    mid = midPoint(shipCoords)
+    
     for y in range (len(g.MINIMAP)):
         for x in range (len(g.MINIMAP[0])):
             g.MINIDISP.blit( g.MINIMAP[y][x].image , (x*g.MINISIZE//2 , y*g.MINISIZE))
             
-    
+    for ship in g.SHIPS:
+        g.MINIDISP.blit( ship.image.image , ( ((g.MXt//2) + (xdif(mid[0],ship.xPos))//100)*g.MINISIZE//2 , ((g.MYt//2) + (ydif(mid[1],ship.yPos))//100)*g.MINISIZE ) )
+                
 def displayMinimap():
-    print("displaying minimap")
-    print(g.Xt*g.FONTSIZE)
     g.SCREEN.blit(g.MINIDISP, (g.Xt*g.FONTSIZE//2 + 5, 2) )
-        
 
 def redraw(xPos,yPos,ship):
     displayMap(xPos, yPos, ship)
+    makeMinimap()
     displayUI()
     
 def distance(p1,p2):
     return math.sqrt( (p2[0] - p1[0])**2 + (p2[1] - p2[1])**2 )
 
-def midpoint(p1,p2):
-    return ( ((p1[0]+p2[0]) // 2) , ((p1[1] + p2[1]) // 2) )
+def midPoint(points):
+    xsum=ysum=0
+    for i in range (len(points)):
+        xsum += points[i][0]
+        ysum += points[i][1]
+    return ( (xsum // len(points) , ysum // len(points) ) )
 
 def xdif(x1,x2):
     return x2 -x1
@@ -187,5 +195,28 @@ def xdif(x1,x2):
 def ydif(y1,y2):
     return y2-y1
 
+def printShips():
+    for i  in range(len(g.SHIPS)):
+        print(i, g.SHIPS[i].name)
+        
+def look(ship, startx = None,starty = None):
 
-    
+    g.CURSOR = entity.Entity(ship = ship, xPos = startx , yPos = starty)
+    while True:
+        for newEvent in pygame.event.get():
+            if newEvent.type == pygame.KEYDOWN:
+                unicode = newEvent.unicode
+                key = newEvent.key
+                if key in [273,274,275,276]:
+                    dir = g.CURSOR.chooseDir(key)
+                    g.CURSOR.move(dir)
+                    displayMap(g.CURSOR.xDisp,g.CURSOR.yDisp,g.CURSOR.ship)
+                    g.SCREEN.blit(g.CURSOR.tile.image, g.CURSOR.pos)
+                    pygame.display.update()
+                    
+                elif unicode == " ":
+                    g.CURSOR = None
+                    return 0
+
+        
+            

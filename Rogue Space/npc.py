@@ -6,9 +6,9 @@ Created on Mar 10, 2013
 import data as g
 import pygame,misc,entity,tile
 
-class NPC(entity.Entity):
+class NPC():
     def __init__(self,Ntype,xPos,yPos,ship):
-        super().__init__(ship=ship)
+        self.ship=ship
         self.Ntype = Ntype
         self.xPos = xPos
         self.yPos = yPos

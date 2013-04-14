@@ -11,6 +11,7 @@ class Environ():
         self.fg = fg
         self.walkable = False
         self.component = component
+        
         if type == g.E.WALL1:
             self.char = "\u0114"
             self.bg = g.DGREY
@@ -35,22 +36,24 @@ class Environ():
 
         elif type == g.E.LASER:
             self.char = " "
-            self.component = comp.Component(type = g.C.LASER)
+            self.component = comp.Component(type = g.C.LASER,owner = self)
         elif type == g.E.CTRLS:
             self.char = "\u002B"
-            self.component = comp.Component(type = g.C.CONTROL)
+            self.component = comp.Component(type = g.C.CONTROL,owner = self)
         elif type == g.E.ENGNE:
             self.char = " "
-            self.component = comp.Component(type = g.C.ENGINE)
+            self.component = comp.Component(type = g.C.ENGINE,owner = self)
         elif type == g.E.SNSOR:
             self.char = "\u002B"
-            self.component = comp.Component(type = g.C.SENSOR)
+            self.component = comp.Component(type = g.C.SENSOR,owner = self)
+        elif type == g.E.MANUV:
+            self.char = " "
+            self.component = comp.Component(type = g.C.MANEUVER,owner = self)
         else:
             self.bg = (0,0,0)
             self.char = "?"
             
-        if self.component:
-            g.COMPLIST.append(self.component)           
+           
         self.tile = tile.Tile(character = self.char , bg = self.bg , fg = self.fg)
         
     def activate(self):

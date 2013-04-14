@@ -8,10 +8,11 @@ import pygame
 import tile
 import data as g
 import misc
+import entity
 
 class Component():
-    def __init__(self,type, *action):
-        
+    def __init__(self,type,owner = None, *action):
+        self.owner = owner
         action = list(action)        
         if type == g.C.LASER:
             self.char = "\u0142"
@@ -27,12 +28,18 @@ class Component():
             self.char = "\u00cb"
             self.action = Engine()
             self.name = "Engine"
+            self.power = 50
             
         elif type == g.C.SENSOR:
             self.char = "O"
             self.action = Sensor(self)
             self.name = "Sensor"
-                
+            
+        elif type == g.C.MANEUVER:
+            self.char = "\u0134"
+            self.action = Maneuvering(self)
+            self.name = "Maneuvering thruster"
+            
         self.type = type    
         self.tile = tile.Tile(character = self.char)
         
@@ -49,9 +56,7 @@ class CAction():
         misc.log("That didn't seem to do anything")
         return 50
     
-    def link(self,target,actionNum = 0,description = "Do something"):
-        print("CAction linking")
-        self.action = Signal(self,target,actionNum,description)
+
         
             
 class Fire(CAction):
@@ -68,17 +73,18 @@ class Fire(CAction):
             return 50
                 
 class Engine():
-    def __init__(self):
-        pass
+    def __init__(self,owner = None):
+        self.owner = owner
         
     def execute(self,actionNum = 0, *params):
         misc.log("engining")
-
+        g.CURSHIP.velocity += 50 ##PLACEHOLDER
         return 50
                 
 class ActMenu(CAction):
-    def __init__(self,actions):
+    def __init__(self, actions, owner = None):
         self.actions = actions
+        self.owner = owner
         
     def execute(self,actionNum = 0):
         if len (self.actions) == 0:
@@ -117,7 +123,7 @@ class ActMenu(CAction):
         print(self.actions)
         
 class Signal(CAction):
-    def __init__(self,owner,target,actionNum = 0,description = "Do something"):
+    def __init__(self,owner = None, target=None, actionNum = 0, description = "Do something"):
         self.owner = owner
         self.target = target
         self.actionNum = actionNum
@@ -127,7 +133,7 @@ class Signal(CAction):
         return self.target.execute(self.actionNum, *params)
     
 class MultiAction(CAction):## for executing multiple component's actions with a single command
-    def __init__(self,*actions):
+    def __init__(self,owner = None, *actions):
         self.actions = list(actions)
         
     def execute(self,actionNum = 0, description = "Do multiple somethings",*params):
@@ -137,19 +143,28 @@ class MultiAction(CAction):## for executing multiple component's actions with a 
         return actTime//len(self.actions)
             
     def addAction(self,action):
+        action.owner = self.owner
         self.actions.append(action)
         
 class Sensor(CAction):
-    def __init__(self,owner,description = "Use the sensors"):
+    def __init__(self,owner = None,description = "Use the sensors"):
         self.owner = owner
         self.description = description
         
     def execute(self,actionNum = 0 , *params):
-        print(g.SHIPS)
         toView = g.SHIPS[actionNum]
-        misc.displayMap(toView.width//2, toView.height//2, toView)
+        misc.look(toView)
         pygame.display.update()
-        input()
-        return 10
-            
         
+        return 10
+
+class Maneuvering(CAction):
+    def __init__(self, description = "Use the maneuvering thrusters", owner = g.CURSHIP):
+        self.description = description
+        self.owner = owner
+    
+    def execute(self,actionNum = 0,descrption = "Use the maneuvering thrusters",*params):
+        self.owner.targetHeading += 10
+        
+
+

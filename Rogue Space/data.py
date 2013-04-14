@@ -47,7 +47,7 @@ global playMap
 playMap = []
 
 global E
-E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE","SNSOR")
+E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE","SNSOR","MANUV")
 
 global S
 S=enum("SHIP1","SHIP2")
@@ -56,7 +56,7 @@ global N
 N = enum("CREWMAN","SLIME","NINJA")
 
 global C
-C = enum("LASER","CONTROL","TELEPAD","ENGINE","SENSOR")
+C = enum("LASER","CONTROL","TELEPAD","ENGINE","SENSOR","MANEUVER")
 
 global SG
 SG = enum("FIRE")
@@ -76,8 +76,8 @@ WHITE = (255,255,255)
 global DGREY
 DGREY = (100,100,100)
 
-global COMPLIST
-COMPLIST = []
+#global COMPLIST
+#COMPLIST = []
 
 global MHISTORY
 MHISTORY = []
@@ -104,3 +104,6 @@ CURSHIP = None
 
 global SHIPS
 SHIPS = []
+
+global CURSOR
+CURSOR = None

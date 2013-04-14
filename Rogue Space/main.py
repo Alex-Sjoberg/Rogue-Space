@@ -10,23 +10,29 @@ pygame.init()
 
 
 def main():
-    misc.initMinimap()
+    playing = True
     timer = gameTime.Timer();
-    g.CURSHIP = pShip = ship.Ship(4)
-    eship1 = ship.Ship(2)
-    eship2 = ship.Ship(1)
-    #g.ENTS = [[None for i in range(g.MWIDTH)] for j in range(g.MHEIGHT)]
+    g.CURSHIP = pShip = ship.Ship(4,heading = 45)
+    eShip1 = ship.Ship(2, x=105)
+    eShip2 = ship.Ship(1,y = 95)
+    misc.printShips()
+    misc.makeMinimap()
     
     misc.log("Welcome to Rogue Space!")
     #misc.log("This should be the second message to be displayed and it should be way too long so it is on multiple linesaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaSO MANY LINES THAT IT NEEDS TWO WHOLE SCREENS!!!!!!! WHOOOOOAAAAAA NO WAY MAN!!!!! THATS SO COOL! I KNOW RIGHT ISNT IT SO COLL I HAVE TO PAD THIS STUPID STRING OS MUCH!!!!!!!!!!!!!!!!!!!!")
     
     p = player.Player(g.MWIDTH//2,g.MHEIGHT//2,ship = pShip)
-    matey = npc.NPC(g.N.CREWMAN,23,17,eship1)
+    matey = npc.NPC(g.N.CREWMAN,23,17,eShip1)
     pShip.entMap[p.yPos][p.xPos] = p
+    
     timer.register(p)
     timer.register(matey)
-    pygame.display.update()
+    timer.register(pShip)
+    timer.register(eShip1)
+    timer.register(eShip2)
     
+    pygame.display.update()
+  
     while True:
         
         timer.tick()

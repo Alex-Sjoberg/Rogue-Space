@@ -2,28 +2,27 @@ import data as g
 import pygame,misc,entity,inventory,tile
 
 
-
 class Player(entity.Entity):
     def __init__(self,x,y,ship):
         super().__init__(ship = ship)
         self.tile = tile.Tile(character = "@")
 
             
-        self.pos = self.tile.image.get_rect().move(g.Xt//2*(g.FONTSIZE//2),g.Yt//2*g.FONTSIZE)
+       # self.pos = self.tile.image.get_rect().move(g.Xt//2*(g.FONTSIZE//2),g.Yt//2*g.FONTSIZE)
         
         self.xPos = len(self.ship.map[0])//2
         self.yPos = len(self.ship.map)//2
-        self.xDisp = self.xPos
-        self.yDisp = self.yPos
+
 
         
         self.actionPoints = 0
         self.speed = 100
-        g.SCREEN.blit(self.tile.image,self.pos)
+       # g.SCREEN.blit(self.tile.image,self.pos)
         
         self.inventory = inventory.Inventory(self)
     def take_turn(self):
         misc.displayMap(self.xDisp,self.yDisp,self.ship)
+        misc.makeMinimap()
         while True:
             for newEvent in pygame.event.get():
     ##            print(newEvent.type)
@@ -48,6 +47,9 @@ class Player(entity.Entity):
                         else:
                             misc.logNow("Nothing there")
                             return 0
+                    elif newEvent.unicode == "x":
+                        return misc.look(self.ship,self.xDisp,self.yDisp)
+                        
                     elif newEvent.unicode == 'a':
                         misc.logNow("Which direction?")
                         while True:
@@ -103,49 +105,57 @@ class Player(entity.Entity):
         elif dir == "RIGHT":
             return self.ship.map[y][x+1].component.execute()
         
-    def move(self,direction):
-        if not misc.checkMove(direction,self.xPos,self.yPos,self.ship):
-            misc.logNow("Can't move there")
-            return False
-        g.SCREEN.fill((0,0,0),self.pos)
-        g.SCREEN.blit(self.ship.map[self.yPos][self.xPos].tile.image , self.pos)
-        self.ship.entMap[self.yPos][self.xPos] = None
         
-        if direction == "UP":
-            if self.onEdge("y",-1):
-                self.pos=self.pos.move(0,-g.FONTSIZE)
-                self.yPos-=1
-            else:
-                self.yPos-=1
-                self.yDisp-=1
-
-        elif direction == "DOWN":
-            if self.onEdge("y",+1):
-                self.pos=self.pos.move(0,g.FONTSIZE)
-                self.yPos+=1
-            else:
-                self.yPos+=1
-                self.yDisp+=1
+    def move(self,direction):
+            if not misc.checkMove(direction,self.xPos,self.yPos,self.ship):
+                misc.logNow("Can't move there")
+                return False
+            self.ship.entMap[self.yPos][self.xPos] = None
             
-        elif direction == "LEFT":
-            if self.onEdge("x",-1):
-                self.xPos-=1
-                self.pos=self.pos.move(-g.FONTSIZE//2,0)
-            else:
-                self.xPos-=1
-                self.xDisp-=1
             
-        elif direction == "RIGHT":
-            if self.onEdge("x",+1):
-                self.xPos+=1
-                self.pos=self.pos.move(g.FONTSIZE//2,0)
-            else:
-                self.xPos+=1
-                self.xDisp+=1
-        self.ship.entMap[self.yPos][self.xPos] = self
-        g.SCREEN.blit(self.tile.image, self.pos)
-
-        return True
+            super().move(direction)
+            '''        
+            g.SCREEN.fill((0,0,0),self.pos)
+            g.SCREEN.blit(self.ship.map[self.yPos][self.xPos].tile.image , self.pos)
+            
+            if direction == "UP":
+                if self.onEdge("y",-1):
+                    self.pos=self.pos.move(0,-g.FONTSIZE)
+                    self.yPos-=1
+                else:
+                    self.yPos-=1
+                    self.yDisp-=1
+    
+            elif direction == "DOWN":
+                if self.onEdge("y",+1):
+                    self.pos=self.pos.move(0,g.FONTSIZE)
+                    self.yPos+=1
+                else:
+                    self.yPos+=1
+                    self.yDisp+=1
+                
+            elif direction == "LEFT":
+                if self.onEdge("x",-1):
+                    self.xPos-=1
+                    self.pos=self.pos.move(-g.FONTSIZE//2,0)
+                else:
+                    self.xPos-=1
+                    self.xDisp-=1
+                
+            elif direction == "RIGHT":
+                if self.onEdge("x",+1):
+                    self.xPos+=1
+                    self.pos=self.pos.move(g.FONTSIZE//2,0)
+                else:
+                    self.xPos+=1
+                    self.xDisp+=1
+                   
+            g.SCREEN.blit(self.tile.image, self.pos)
+            '''
+        
+            self.ship.entMap[self.yPos][self.xPos] = self
+            return True 
+           
     def itemHere(self):
         if self.ship.map[self.yPos][self.xPos].inventory:
             return True
@@ -162,23 +172,5 @@ class Player(entity.Entity):
             misc.logNow("Inventory is full")
             return 0
         
-    def onEdge(self,axis,direct):
-        if axis == "x":
-            if ((self.xPos - g.Xt//2) <= 0 or (self.xPos +g.Xt//2) >= len(self.ship.map[0])) and ((self.xPos - g.Xt//2 +direct) <= 0 or (self.xPos +g.Xt//2 +direct) >= len(self.ship.map[0])):
-                return True
-            return False
-        else:
-            if ((self.yPos -g.Yt//2) <= 0 or (self.yPos + g.Yt//2 ) >= len(self.ship.map)-1) and ((self.yPos -g.Yt//2+direct) <= 0 or (self.yPos + g.Yt//2 + direct) >= len(self.ship.map)-1):
-                return True
-            return False
 
-    def chooseDir(self,key):
-        if key == 273:
-            dir = "UP"
-        elif key == 274:
-            dir = "DOWN"
-        elif key == 276:
-            dir = "LEFT"
-        elif key == 275:
-            dir = "RIGHT"
-        return dir
+
