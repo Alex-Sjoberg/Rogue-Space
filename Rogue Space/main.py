@@ -1,5 +1,6 @@
 import pygame, sys,traceback
 import data as g
+import interface as UI
 import ship
 import player
 import misc
@@ -7,6 +8,7 @@ import gameTime
 import npc
 
 pygame.init()
+pygame.event.set_allowed([pygame.KEYDOWN,pygame.QUIT])
 
 
 def main():
@@ -14,14 +16,14 @@ def main():
     timer = gameTime.Timer();
     g.CURSHIP = pShip = ship.Ship(4,heading = 45)
     eShip1 = ship.Ship(2, x=105)
-    eShip2 = ship.Ship(1,y = 95)
+    eShip2 = ship.Ship(1, y=95)
     misc.printShips()
     misc.makeMinimap()
     
-    misc.log("Welcome to Rogue Space!")
+    g.LOG.logNow("Welcome to Rogue Space!")
     #misc.log("This should be the second message to be displayed and it should be way too long so it is on multiple linesaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaSO MANY LINES THAT IT NEEDS TWO WHOLE SCREENS!!!!!!! WHOOOOOAAAAAA NO WAY MAN!!!!! THATS SO COOL! I KNOW RIGHT ISNT IT SO COLL I HAVE TO PAD THIS STUPID STRING OS MUCH!!!!!!!!!!!!!!!!!!!!")
     
-    p = player.Player(g.MWIDTH//2,g.MHEIGHT//2,ship = pShip)
+    g.PLAYER = p = player.Player(g.MWIDTH//2,g.MHEIGHT//2,ship = pShip)
     matey = npc.NPC(g.N.CREWMAN,23,17,eShip1)
     pShip.entMap[p.yPos][p.xPos] = p
     

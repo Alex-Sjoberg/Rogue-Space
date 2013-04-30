@@ -3,7 +3,7 @@ import component as comp
 import data as g
 
 class Environ():
-    def __init__(self,type,bg=g.BLACK,fg = g.WHITE, inv = None, component = None):
+    def __init__(self,type,bg=g.BLACK,fg = g.WHITE, inv = None, component = None, owner = None):
         
         self.inventory = inv
         self.type = type
@@ -36,19 +36,19 @@ class Environ():
 
         elif type == g.E.LASER:
             self.char = " "
-            self.component = comp.Component(type = g.C.LASER,owner = self)
+            self.component = comp.Component(type = g.C.LASER,owner = owner)
         elif type == g.E.CTRLS:
             self.char = "\u002B"
-            self.component = comp.Component(type = g.C.CONTROL,owner = self)
+            self.component = comp.Component(type = g.C.CONTROL,owner = owner)
         elif type == g.E.ENGNE:
             self.char = " "
-            self.component = comp.Component(type = g.C.ENGINE,owner = self)
+            self.component = comp.Component(type = g.C.ENGINE,owner = owner)
         elif type == g.E.SNSOR:
             self.char = "\u002B"
-            self.component = comp.Component(type = g.C.SENSOR,owner = self)
+            self.component = comp.Component(type = g.C.SENSOR,owner = owner)
         elif type == g.E.MANUV:
             self.char = " "
-            self.component = comp.Component(type = g.C.MANEUVER,owner = self)
+            self.component = comp.Component(type = g.C.MANEUVER,owner = owner)
         else:
             self.bg = (0,0,0)
             self.char = "?"

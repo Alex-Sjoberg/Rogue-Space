@@ -8,7 +8,7 @@ import pygame
 import tile
 import data as g
 import misc
-import entity
+import interface as UI
 
 class Component():
     def __init__(self,type,owner = None, *action):
@@ -37,8 +37,9 @@ class Component():
             
         elif type == g.C.MANEUVER:
             self.char = "\u0134"
-            self.action = Maneuvering(self)
+            self.action = Maneuvering(self,owner = owner)
             self.name = "Maneuvering thruster"
+            self.power = 10
             
         self.type = type    
         self.tile = tile.Tile(character = self.char)
@@ -53,7 +54,7 @@ class CAction():
         self.linkedActions = []
         
     def execute(self,actionNum = 0):
-        misc.log("That didn't seem to do anything")
+        g.LOG.log("That didn't seem to do anything")
         return 50
     
 
@@ -66,10 +67,10 @@ class Fire(CAction):
         
     def execute(self,actionNum = 0):
         if actionNum == 0:
-            misc.log("I'm firin the laser")
+            g.LOG.log("I'm firin the laser")
             return 50
         else:
-            misc.log("I'm firing the laser heroically")
+            g.LOG.log("I'm firing the laser heroically")
             return 50
                 
 class Engine():
@@ -77,7 +78,7 @@ class Engine():
         self.owner = owner
         
     def execute(self,actionNum = 0, *params):
-        misc.log("engining")
+        g.LOG.log("engining")
         g.CURSHIP.velocity += 50 ##PLACEHOLDER
         return 50
                 
@@ -88,7 +89,7 @@ class ActMenu(CAction):
         
     def execute(self,actionNum = 0):
         if len (self.actions) == 0:
-            misc.log("Its not working!")
+            g.LOG.log("Its not working!")
             return 0
         if len(self.actions) == 1:
             return self.actions[0].execute()
@@ -155,16 +156,23 @@ class Sensor(CAction):
         toView = g.SHIPS[actionNum]
         misc.look(toView)
         pygame.display.update()
-        
         return 10
 
 class Maneuvering(CAction):
     def __init__(self, description = "Use the maneuvering thrusters", owner = g.CURSHIP):
         self.description = description
         self.owner = owner
-    
-    def execute(self,actionNum = 0,descrption = "Use the maneuvering thrusters",*params):
-        self.owner.targetHeading += 10
         
-
+    def execute(self,actionNum = 0,descrption = "Use the maneuvering thrusters",*params):
+        try:
+            newHeading = int(g.LOG.prompt("Enter new heading:"))
+            if newHeading >= 0 and newHeading <360:
+                self.owner.targetHeading = newHeading
+                g.LOG.log("New heading set")
+                return 100
+            else:
+                raise ValueError
+        except ValueError:
+            g.LOG.logNow("Invalid heading")
+            return 0
 

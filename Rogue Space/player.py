@@ -1,4 +1,5 @@
 import data as g
+import interface as UI
 import pygame,misc,entity,inventory,tile
 
 
@@ -21,8 +22,8 @@ class Player(entity.Entity):
         
         self.inventory = inventory.Inventory(self)
     def take_turn(self):
-        misc.displayMap(self.xDisp,self.yDisp,self.ship)
-        misc.makeMinimap()
+        misc.redraw(self.xDisp, self.yDisp, self.ship)
+        pygame.display.update()
         while True:
             for newEvent in pygame.event.get():
     ##            print(newEvent.type)
@@ -31,7 +32,7 @@ class Player(entity.Entity):
                     pygame.quit()
                                   
                 elif newEvent.type == pygame.KEYDOWN:
-    ##                print ("Key was" , newEvent.key)
+                    print ("Key was" , newEvent.key, "Unicode was" , newEvent.unicode)
                     if newEvent.unicode == 'q':
                         pygame.quit()
                         break
@@ -45,13 +46,13 @@ class Player(entity.Entity):
                         if self.itemHere():
                             return self.getItems()
                         else:
-                            misc.logNow("Nothing there")
+                            g.LOG.logNow("Nothing there")
                             return 0
                     elif newEvent.unicode == "x":
                         return misc.look(self.ship,self.xDisp,self.yDisp)
                         
                     elif newEvent.unicode == 'a':
-                        misc.logNow("Which direction?")
+                        g.LOG.logNow("Which direction?")
                         while True:
                             for event in pygame.event.get():
                                 if event.type == pygame.KEYDOWN:
@@ -60,10 +61,10 @@ class Player(entity.Entity):
                                         if self.canActivate(dir,self.xPos,self.yPos):
                                             return self.activate(dir,self.xPos,self.yPos)
                                         else:
-                                            misc.logNow("Can't activate that")
+                                            g.LOG.logNow("Can't activate that")
                                             return 0     
                                     else:
-                                        misc.logNow("Invalid direction")
+                                        g.LOG.logNow("Invalid direction")
                                         return 0
                         
                     elif newEvent.key in [273,274,275,276]:
@@ -108,7 +109,7 @@ class Player(entity.Entity):
         
     def move(self,direction):
             if not misc.checkMove(direction,self.xPos,self.yPos,self.ship):
-                misc.logNow("Can't move there")
+                g.LOG.logNow("Can't move there")
                 return False
             self.ship.entMap[self.yPos][self.xPos] = None
             
@@ -169,7 +170,7 @@ class Player(entity.Entity):
                     self.inventory.addItem(tileInv.getItem(key))
             return 100
         else:
-            misc.logNow("Inventory is full")
+            g.LOG.logNow("Inventory is full")
             return 0
         
 

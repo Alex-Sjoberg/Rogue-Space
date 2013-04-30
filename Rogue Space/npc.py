@@ -38,6 +38,8 @@ class NPC():
     def take_turn(self):
         if self.move("RIGHT"):
             return 100
+        elif self.move("LEFT"):
+            return 100
         else:
             return 100
         

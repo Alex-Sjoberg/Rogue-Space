@@ -5,6 +5,7 @@ Created on Mar 12, 2013
 '''
 import misc,tile
 import data as g
+import interface as UI
 
 class Entity():
     def __init__(self,ship = g.CURSHIP,xPos = None , yPos = None):
@@ -24,7 +25,7 @@ class Entity():
         self.yDisp = self.yPos
             
     def attack(self,target):
-        misc.log("Hi-yah!")
+        g.LOG.log("Hi-yah!")
 
     def move(self,direction):
         
@@ -33,7 +34,7 @@ class Entity():
             
             if direction == "UP":
                 if self.yPos == 0:
-                    misc.logNow("Can't move there")
+                    g.LOG.logNow("Can't move there")
                 elif self.onEdge("y",-1):
                     self.pos=self.pos.move(0,-g.FONTSIZE)
                     self.yPos-=1                    
@@ -43,7 +44,7 @@ class Entity():
     
             elif direction == "DOWN":
                 if self.yPos == len(self.ship.map)-1:
-                    misc.logNow("Can't move there")
+                    g.LOG.logNow("Can't move there")
                 elif self.onEdge("y",+1):
                     self.pos=self.pos.move(0,g.FONTSIZE)
                     self.yPos+=1                    
@@ -53,7 +54,7 @@ class Entity():
                 
             elif direction == "LEFT":
                 if self.xPos == 0:
-                    misc.logNow("Can't move there")
+                    g.LOG.logNow("Can't move there")
                 elif self.onEdge("x",-1):
                     self.xPos-=1
                     self.pos=self.pos.move(-g.FONTSIZE//2,0)                    
@@ -63,7 +64,7 @@ class Entity():
                 
             elif direction == "RIGHT":
                 if self.xPos == len(self.ship.map[0])-1:
-                    misc.logNow("Can't move there")  
+                    g.LOG.logNow("Can't move there")  
                 elif self.onEdge("x",+1):
                     self.xPos+=1
                     self.pos=self.pos.move(g.FONTSIZE//2,0)                    

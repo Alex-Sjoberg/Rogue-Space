@@ -7,6 +7,18 @@ def enum(*sequential, **named):
 
 FONTNAME = "DwarfFortressVan.ttf"
 
+global CURSHIP
+CURSHIP = None
+
+global SHIPS
+SHIPS = []
+
+global CURSOR
+CURSOR = None
+
+global PLAYER
+PLAYER = None
+
 global FONTSIZE
 FONTSIZE = 32
 
@@ -14,7 +26,10 @@ global MSGSIZE
 MSGSIZE = 20
 
 global MINISIZE
-MINISIZE = 20
+MINISIZE = 14
+
+global MINIPADDING
+MINIPADDING = 10
 
 global Xt
 Xt = 50
@@ -76,9 +91,15 @@ WHITE = (255,255,255)
 global DGREY
 DGREY = (100,100,100)
 
+global RED
+RED = (255,0,0)
+
+global ORANGE
+ORANGE = (100,100,0)
+
 #global COMPLIST
 #COMPLIST = []
-
+'''
 global MHISTORY
 MHISTORY = []
 
@@ -87,23 +108,23 @@ MPENDING = []
 
 global LOGDISP
 LOGDISP = pygame.Surface( ((Xt*FONTSIZE)//2 - 2 , FONTSIZE*6 - 2) )
+'''
+import interface
+
+global LOG
+LOG = interface.MessageLog(2, 2+ Yt*FONTSIZE, Xt*FONTSIZE//2-2, FONTSIZE*6 -2,MSGSIZE)
 
 import tile
 
 global MINIMAP
-MINIMAP = [  [tile.Tile(character = ".",fontsize = MINISIZE) for i in range (MXt)] for i in range (MYt) ]
+MINIMAP = [  [tile.Tile(character = ".",fontsize = MINISIZE, minimap = True) for i in range (MXt)] for i in range (MYt) ]
 
 global MINIDISP
-MINIDISP = pygame.Surface( (MXt*MINISIZE//2 , MYt*MINISIZE)  )
+MINIDISP = pygame.Surface( (MXt*(MINISIZE+MINIPADDING) , MYt*(MINISIZE+MINIPADDING))  )
 
 global MAPDISP
 MAPDISP = pygame.Surface((Xt * FONTSIZE , Yt * FONTSIZE))
 
-global CURSHIP
-CURSHIP = None
 
-global SHIPS
-SHIPS = []
 
-global CURSOR
-CURSOR = None
+

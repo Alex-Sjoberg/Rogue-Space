@@ -4,6 +4,7 @@ Created on Mar 10, 2013
 @author: asjoberg
 '''
 import data as g
+import interface as UI
 import entity,pygame,fractions
 import math
 
@@ -16,7 +17,7 @@ def displayMap(playerX,playerY, ship = g.CURSHIP):
         for x in range(g.Xt):
 ##            print (playerY, Yt//2, playerX)
             displayAt(playerX-g.Xt//2 +x, playerY-g.Yt//2 +y,x,y,ship)
-    displayUI()
+    UI.displayUI()
 
 def displayAt(xTile,yTile,x,y,ship):
 ##    print(yTile,xTile,x,y , )
@@ -76,88 +77,6 @@ def printComponents(ship):
     for comp in ship.components:
         print(comp," ",comp.name)
         
-def log(newMessage):
-    g.MPENDING.append(newMessage)
-
-def logNow(newMessage):
-    g.MPENDING.append(newMessage)
-    processMessages()
-
-def processMessages():
-    if len(g.MPENDING) == 0:
-        displayLog()
-        return
-    g.MPENDING = logLines(g.MPENDING)
-    numLines = len(g.MPENDING)
-    ystart = g.LOGDISP.get_height() - g.FONTSIZE
-    
-##Keep going until out of new lines to display
-    while True:
-        g.LOGDISP.fill(g.BLACK) #blank the message log
-        yoffset = 0    
-        available = 6
-        numLines = len(g.MPENDING) #see how many new lines need to be displayed
-        
-        if numLines > available:#if its more than a single screen
-            
-            print("Pending:" , g.MPENDING)
-            g.MHISTORY += g.MPENDING[:available - 1]#add appropriate number to 
-            g.MPENDING = g.MPENDING[available - 1:]
-            g.MHISTORY.append("--More--")
-            
-            for i in range(1, available+1 if len(g.MHISTORY) >= available else len(g.MHISTORY)+1):
-                print(i," From history",g.MHISTORY[-i])
-                printText(g.MHISTORY[-i], "Courier", g.MSGSIZE, 0, ystart + yoffset, surface = g.LOGDISP)
-                yoffset -= g.FONTSIZE            
-            
-            displayLog()
-            pygame.display.update()
-            
-            waiting = True
-            while waiting:
-                for event in pygame.event.get():
-                    if event.type == pygame.KEYDOWN:
-                        waiting = False        
-            
-        else: 
-            g.MHISTORY += g.MPENDING
-            g.MPENDING.clear()
-            for i in range(1, available+1 if len(g.MHISTORY) >= available else len(g.MHISTORY)+1):
-                print(i," From history",g.MHISTORY[-i])
-                printText(g.MHISTORY[-i], "Courier", g.MSGSIZE, 0, ystart + yoffset, surface = g.LOGDISP)
-                yoffset -= g.FONTSIZE  
-            displayLog()
-            pygame.display.update()               
-            break
-        
-            
-
-              
-        if len(g.MPENDING) == 0:
-            break 
-
-        
-    
-def displayUI():
-    pygame.draw.line(g.SCREEN, g.WHITE, (0, (g.Yt)*g.FONTSIZE), ((g.Xt)*g.FONTSIZE//2, (g.Yt)*g.FONTSIZE), 2)
-    pygame.draw.line(g.SCREEN, g.WHITE, ((g.Xt)*g.FONTSIZE//2, 0), ((g.Xt)*g.FONTSIZE//2, g.height), 2)
-    processMessages()
-    displayMinimap()
-    
-def displayLog():
-    g.SCREEN.blit(g.LOGDISP , (2,g.Yt*g.FONTSIZE+2))
-    
-def logLines(messages):
-    logLines = []
-    #maxLineLen = (g.LOGDISP.get_width() // g.MSGSIZE)
-    maxLineLen = 67
-    for line in messages:
-        while len(line) // (maxLineLen+1) != 0:
-            logLines.append(line[:maxLineLen-1])
-            line = line[maxLineLen:]
-        logLines.append(line)
-    return logLines
-
 def makeMinimap():
     shipCoords = []
     for ship in g.SHIPS:
@@ -166,10 +85,12 @@ def makeMinimap():
     
     for y in range (len(g.MINIMAP)):
         for x in range (len(g.MINIMAP[0])):
-            g.MINIDISP.blit( g.MINIMAP[y][x].image , (x*g.MINISIZE//2 , y*g.MINISIZE))
+            g.MINIDISP.blit( g.MINIMAP[y][x].image , (x*(g.MINISIZE+g.MINIPADDING) , y*(g.MINISIZE+g.MINIPADDING)))
             
     for ship in g.SHIPS:
-        g.MINIDISP.blit( ship.image.image , ( ((g.MXt//2) + (xdif(mid[0],ship.xPos))//100)*g.MINISIZE//2 , ((g.MYt//2) + (ydif(mid[1],ship.yPos))//100)*g.MINISIZE ) )
+        ship.updateDirArrow()
+        g.MINIDISP.blit( ship.image.image , ( ((g.MXt//2) + (xdif(mid[0],ship.xPos))//100)*(g.MINISIZE+g.MINIPADDING) , ((g.MYt//2) + (ydif(mid[1],ship.yPos))//100)*(g.MINISIZE+g.MINIPADDING) ) )
+
                 
 def displayMinimap():
     g.SCREEN.blit(g.MINIDISP, (g.Xt*g.FONTSIZE//2 + 5, 2) )
@@ -177,7 +98,9 @@ def displayMinimap():
 def redraw(xPos,yPos,ship):
     displayMap(xPos, yPos, ship)
     makeMinimap()
-    displayUI()
+    displayMinimap()
+    UI.displayUI()
+    pygame.display.update()
     
 def distance(p1,p2):
     return math.sqrt( (p2[0] - p1[0])**2 + (p2[1] - p2[1])**2 )
@@ -218,5 +141,4 @@ def look(ship, startx = None,starty = None):
                     g.CURSOR = None
                     return 0
 
-        
             
