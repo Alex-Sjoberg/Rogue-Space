@@ -62,7 +62,7 @@ global playMap
 playMap = []
 
 global E
-E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE","SNSOR","MANUV")
+E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE","SNSOR","MANUV","STRUP","STRDN")
 
 global S
 S=enum("SHIP1","SHIP2")

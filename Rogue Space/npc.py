@@ -7,14 +7,15 @@ import data as g
 import pygame,misc,entity,tile
 
 class NPC():
-    def __init__(self,Ntype,xPos,yPos,ship):
+    def __init__(self,Ntype,xPos,yPos,zPos,ship):
         self.ship=ship
         self.Ntype = Ntype
         self.xPos = xPos
         self.yPos = yPos
+        self.zPos = zPos
         self.action_points = 0
         
-        self.ship.entMap[yPos][xPos] = self
+        self.ship.entMap[self.zPos][self.yPos][self.xPos] = self
         
         if Ntype == g.N.CREWMAN:
             self.friendly = True
@@ -45,8 +46,8 @@ class NPC():
         
     def move(self,direction):
         
-        if misc.checkMove(direction,self.xPos,self.yPos,self.ship):
-            self.ship.entMap[self.yPos][self.xPos] = None
+        if misc.checkMove(direction,self.xPos,self.yPos,self.zPos,self.ship):
+            self.ship.entMap[self.zPos][self.yPos][self.xPos] = None
             
             if direction == "RIGHT":
                 self.xPos+=1
@@ -57,7 +58,7 @@ class NPC():
             elif direction == "DOWN":
                 self.yPos+=1
 
-            self.ship.entMap[self.yPos][self.xPos] = self
+            self.ship.entMap[self.zPos][self.yPos][self.xPos] = self
             return True
         
         return False

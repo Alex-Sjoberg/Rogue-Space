@@ -9,59 +9,64 @@ import entity,pygame,fractions
 import math
 
 
-def displayMap(playerX,playerY, ship = g.CURSHIP):
+def displayMap(playerX,playerY,playerZ, ship = g.CURSHIP):
 ##    debugMapDisplay()
 
     g.MAPDISP.fill((0,0,0))
     for y in range(g.Yt):
         for x in range(g.Xt):
 ##            print (playerY, Yt//2, playerX)
-            displayAt(playerX-g.Xt//2 +x, playerY-g.Yt//2 +y,x,y,ship)
+            displayAt(playerX-g.Xt//2 +x, playerY-g.Yt//2 +y,playerZ, x,y,ship)
     UI.displayUI()
 
-def displayAt(xTile,yTile,x,y,ship):
+def displayAt(xTile,yTile,zLvl,x,y,ship):
 ##    print(yTile,xTile,x,y , )
-    if isinstance(ship.entMap[yTile][xTile] , entity.Entity):
-        g.SCREEN.blit(ship.entMap[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
-    elif ship.map[yTile][xTile].component:
-        g.SCREEN.blit(ship.map[yTile][xTile].component.tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
-    elif ship.map[yTile][xTile].inventory:
-        g.SCREEN.blit(ship.map[yTile][xTile].inventory.peek().tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    if isinstance(ship.entMap[zLvl][yTile][xTile] , entity.Entity):
+        g.SCREEN.blit(ship.entMap[zLvl][yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    elif ship.map[zLvl][yTile][xTile].component:
+        g.SCREEN.blit(ship.map[zLvl][yTile][xTile].component.tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+    elif ship.map[zLvl][yTile][xTile].inventory:
+        g.SCREEN.blit(ship.map[zLvl][yTile][xTile].inventory.peek().tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     else:
-        g.SCREEN.blit(ship.map[yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
+        g.SCREEN.blit(ship.map[zLvl][yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     
 def debugMapDisplay(ship):
-    for i in range (len(ship.map)):
-        print()
-        for j in range(len(ship.map[15])):
-            print(ship.map[i][j].char,end = '')
+    for z in range(len(ship.map)):
+        print("Level " , z)
+        for i in range (len(ship.map[0])):
+            print()
+            for j in range(len(ship.map[0][15])):
+                try:
+                    print(ship.map[z][i][j].char,end = '')
+                except:
+                    print("?",end="")
             
-def checkMove(direction,x,y,ship):
+def checkMove(direction,x,y,z,ship):
     
     if direction == "UP":
-        if y == 0 or not ship.map[y-1][x].walkable:
+        if y == 0 or not ship.map[z][y-1][x].walkable:
             return False
     elif direction == "DOWN":
-        if y == len(ship.map) or not ship.map[y+1][x].walkable:
+        if y == len(ship.map[0]) or not ship.map[z][y+1][x].walkable:
             return False
     elif direction == "LEFT":
-        if x == 0 or not ship.map[y][x-1].walkable:
+        if x == 0 or not ship.map[z][y][x-1].walkable:
             return False
     elif direction == "RIGHT":
-        if x == len(ship.map[0]) or not ship.map[y][x+1].walkable:
+        if x == len(ship.map[0][0]) or not ship.map[z][y][x+1].walkable:
             return False
     return True
 
-def checkOccupied(direction,x,y,ship):
+def checkOccupied(direction,x,y,z,ship):
     
     if direction == "UP":
-        target = ship.entMap[y-1][x]
+        target = ship.entMap[z][y-1][x]
     elif direction == "DOWN":
-        target = ship.entMap[y+1][x]
+        target = ship.entMap[z][y+1][x]
     elif direction == "LEFT":
-        target = ship.entMap[y][x-1]
+        target = ship.entMap[z][y][x-1]
     elif direction == "RIGHT":
-        target = ship.entMap[y][x+1]
+        target = ship.entMap[z][y][x+1]
         
     if isinstance(target, entity.Entity):
         return target
@@ -95,8 +100,8 @@ def makeMinimap():
 def displayMinimap():
     g.SCREEN.blit(g.MINIDISP, (g.Xt*g.FONTSIZE//2 + 5, 2) )
 
-def redraw(xPos,yPos,ship):
-    displayMap(xPos, yPos, ship)
+def redraw(xPos,yPos,zPos,ship):
+    displayMap(xPos, yPos,zPos, ship)
     makeMinimap()
     displayMinimap()
     UI.displayUI()
@@ -122,9 +127,10 @@ def printShips():
     for i  in range(len(g.SHIPS)):
         print(i, g.SHIPS[i].name)
         
-def look(ship, startx = None,starty = None):
+def look(ship, startx = None,starty = None, startz = 0):
 
-    g.CURSOR = entity.Entity(ship = ship, xPos = startx , yPos = starty)
+    g.CURSOR = entity.Entity(ship = ship, xPos = startx , yPos = starty, zPos = startz)
+    displayMap(g.CURSOR.xDisp,g.CURSOR.yDisp,g.CURSOR.zPos,g.CURSOR.ship)
     while True:
         for newEvent in pygame.event.get():
             if newEvent.type == pygame.KEYDOWN:
@@ -133,12 +139,14 @@ def look(ship, startx = None,starty = None):
                 if key in [273,274,275,276]:
                     dir = g.CURSOR.chooseDir(key)
                     g.CURSOR.move(dir)
-                    displayMap(g.CURSOR.xDisp,g.CURSOR.yDisp,g.CURSOR.ship)
-                    g.SCREEN.blit(g.CURSOR.tile.image, g.CURSOR.pos)
-                    pygame.display.update()
-                    
+                elif unicode == "<":
+                    g.CURSOR.ascend()  
+                elif unicode == ">":
+                    g.CURSOR.descend()
                 elif unicode == " ":
                     g.CURSOR = None
                     return 0
-
+                displayMap(g.CURSOR.xDisp,g.CURSOR.yDisp,g.CURSOR.zPos,g.CURSOR.ship)
+                g.SCREEN.blit(g.CURSOR.tile.image, g.CURSOR.pos)
+                pygame.display.update()
             

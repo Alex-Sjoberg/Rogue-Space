@@ -79,7 +79,7 @@ class MessageLog(): ##NEED TO PASS IN WIDTH AND SUCH
         inputStart = (len(promptString) +4) * (g.MSGSIZE//2)
         
         while True:
-            misc.redraw(g.PLAYER.xDisp, g.PLAYER.yDisp, g.CURSHIP)
+            misc.redraw(g.PLAYER.xDisp, g.PLAYER.yDisp,g.PLAYER.zPos, g.CURSHIP)
             pygame.display.update()        
             
             for newEvent in pygame.event.get():
