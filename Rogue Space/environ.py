@@ -1,6 +1,7 @@
 import pygame,inventory,item,tile,random
 import component as comp
 import data as g
+from component import Component
 
 class Environ():
     def __init__(self,type,bg=g.BLACK,fg = g.WHITE, inv = None, component = None, owner = None):
@@ -11,6 +12,7 @@ class Environ():
         self.fg = fg
         self.walkable = False
         self.component = component
+        self.owner = owner
         
         if type == g.E.WALL1:
             self.char = "\u0114"
@@ -61,13 +63,28 @@ class Environ():
             self.bg = (0,0,0)
             self.char = "?"
             
-           
-        self.tile = tile.Tile(character = self.char , bg = self.bg , fg = self.fg)
+        self.init_image()
         
+    def add_component(self,type):
+        self.component = comp.Component(type = type , owner = self.owner)  
+         
     def activate(self):
         if self.component:
             self.component.execute()
+            
+    def pre_pickle(self):
+        self.tile = None
+        if self.component:
+            self.component.pre_pickle()
+    
+    def unpickle(self):
+        self.init_image()
+        if self.component:
+            self.component.unpickle()
         
+    def init_image(self):
+        self.tile = tile.Tile(character = self.char , bg = self.bg , fg = self.fg)
+
 
 
 
