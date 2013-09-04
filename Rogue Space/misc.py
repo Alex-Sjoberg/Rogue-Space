@@ -5,7 +5,7 @@ Created on Mar 10, 2013
 '''
 import data as g
 import interface as UI
-import entity,pygame,fractions
+import entity,pygame
 import math
 
 
@@ -17,10 +17,10 @@ def displayMap(playerX,playerY,playerZ, ship = g.CURSHIP):
         for x in range(g.Xt):
 ##            print (playerY, Yt//2, playerX)
             displayAt(playerX-g.Xt//2 +x, playerY-g.Yt//2 +y,playerZ, x,y,ship)
-    UI.displayUI()
+    UI.displayUI()##<- BAD, Why displaying UI here???
 
 def displayAt(xTile,yTile,zLvl,x,y,ship):
-##    print(yTile,xTile,x,y , )
+   # print(zLvl,yTile,xTile)
     if isinstance(ship.entMap[zLvl][yTile][xTile] , entity.Entity):
         g.SCREEN.blit(ship.entMap[zLvl][yTile][xTile].tile.image,(x*g.FONTSIZE//2,y*g.FONTSIZE))
     elif ship.map[zLvl][yTile][xTile].component:

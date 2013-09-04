@@ -6,6 +6,7 @@ import component as comp
 class Ship():
     def __init__(self,model,x = 1000,y = 1000, heading = 90, name = "Unknown ship"):
         self.type = model
+        self.character = "?"
         
         self.xPos = x
         self.yPos = y
@@ -19,9 +20,9 @@ class Ship():
         self.map = []
         self.entMap = []
         self.components = []
-        self.width = 0
-        self.height = 0
-        self.zheight = 0
+        self.width = 25
+        self.height = 50
+        self.zheight = 1
         self.name = name
         
         self.turnRate = 0
@@ -29,7 +30,7 @@ class Ship():
         
         if model == 1:
             self.name = "Sitting Duck"
-            self.image = tile.Tile(character = "\u0108",fontsize = g.MINISIZE, heading = self.heading)
+            self.character = "\u0108"
             self.makeShip(
             [
                 [
@@ -63,11 +64,11 @@ class Ship():
         elif model == 2:
             self.name = "Behemoth"
             self.makeShip([ [ [g.E.FLOOR if i % 2 ==1 else g.E.FLOOR for i in range (55)] for i in range (30)] for i in range(3) ])
-            self.image = tile.Tile(character = "\u0107",fontsize = g.MINISIZE, heading = self.heading)
+            self.character = "\u0107"
             
         elif model == 3:
             self.name = "Frigate"
-            self.image = tile.Tile(character = "\u00C5",fontsize = g.MINISIZE, heading = self.heading)
+            self.character = "\u00C5"
             self.makeShip(
             [          
                     [
@@ -137,7 +138,7 @@ class Ship():
                           )
         elif model == 4:
             self.name = "Fighter"
-            self.image = tile.Tile(character = "x",fontsize = g.MINISIZE, heading = self.heading)
+            self.character = "x"
             self.makeShip(
             [
                 [
@@ -162,6 +163,12 @@ class Ship():
             self.components[3].action.link(self.components[2].action,2,description = "View enemy ship 2" )
             self.components[3].action.link(self.components[0].action,1,description = "Turn Right")
             
+        elif model == -1:
+            self.name = "New Ship"
+            self.character = "?"
+            
+        self.init_image()
+
     def makeShip(self,text):
         g.MWIDTH
         g.MHEIGHT
@@ -233,7 +240,17 @@ class Ship():
                     self.heading = (self.heading + self.turnRate) % 360
                 
         return 100
-
+    
+    def init_blank_map(self,width,height,zheight):
+        self.map = [ [ [environ.Environ(g.E.SPACE,owner = self) for x in range (width)] for y in range (height)] for z in range(zheight)]
+        self.entMap = [ [ [None for i in range(width)] for j in range(height)] for k in range(zheight)]
+        self.width = len(self.map[0][0])
+        self.height = len(self.map[0])
+        self.zheight = len(self.map)
+        
+    def init_image(self):
+        self.image = tile.Tile(character = self.character ,fontsize = g.MINISIZE, heading = self.heading)
+        
     def calculateStats(self):
         for component in self.components:
             if component.type == g.C.ENGINE:
@@ -241,6 +258,22 @@ class Ship():
             elif component.type == g.C.MANEUVER:
                 self.turnRate += component.power
                 
+    def pre_pickle(self):
+        self.image = None
+        for z in range(self.zheight):
+            for y in range(self.height):
+                for x in range(self.width):
+                    self.map[z][y][x].pre_pickle()
+                    if self.entMap[z][y][x]:
+                        self.entMap[z][y][x].pre_pickle()
+                    
+    def unpickle(self):
+        self.init_image()
+        for z in range(self.zheight):
+            for y in range(self.height):
+                for x in range(self.width):
+                    self.map[z][y][x].unpickle()
+                    
     def updateDirArrow(self):
         self.image.updateArrow(self.heading)
         

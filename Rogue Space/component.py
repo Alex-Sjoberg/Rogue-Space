@@ -9,7 +9,9 @@ import tile
 import data as g
 import misc
 import interface as UI
-
+#TODO WHy does action have more than one action? component should have more than one possible action
+# not the action itself
+# Whole component thing needs reworked
 class Component():
     def __init__(self,type,owner = None, *action):
         self.owner = owner
@@ -42,12 +44,20 @@ class Component():
             self.power = 10
             
         self.type = type    
-        self.tile = tile.Tile(character = self.char)
+        self.init_image()
         
     def execute(self,actionNum = 0):
         return self.action.execute(actionNum)
        
-
+    def pre_pickle(self):
+        self.tile = None
+        
+    def unpickle(self):
+        self.init_image()
+        
+    def init_image(self):
+        self.tile = tile.Tile(character = self.char)
+        
 class CAction():
     def __init__(self):
         self.description = "Do nothing"
@@ -99,7 +109,8 @@ class ActMenu(CAction):
             starty = 10
             xoffset = 0
             yoffset = 0
-            for i in range (len(self.actions)):
+            #TODO replace with itemlist object - duplicate code
+            for i in range (len(self.actions)): 
                 if yoffset >= 19 * (g.FONTSIZE+5):
                     yoffset = 0
                     xoffset += (32 * (g.FONTSIZE//2)) + 5
@@ -162,6 +173,7 @@ class Maneuvering(CAction):
     def __init__(self, description = "Use the maneuvering thrusters", owner = g.CURSHIP):
         self.description = description
         self.owner = owner
+        self.possible_actions = {"Set new heading":1}
         
     def execute(self,actionNum = 0,descrption = "Use the maneuvering thrusters",*params):
         try:

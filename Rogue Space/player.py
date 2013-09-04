@@ -203,7 +203,7 @@ class Player(entity.Entity):
     
     def getItems(self):
         if not self.inventory.isFull():
-            tileInv = self.ship.map[zPos][self.yPos][self.xPos].inventory
+            tileInv = self.ship.map[self.zPos][self.yPos][self.xPos].inventory
             for key in list(tileInv.getKeys()):
                 if not self.inventory.isFull():
                     self.inventory.addItem(tileInv.getItem(key))

@@ -3,6 +3,7 @@ pygame.init()
 
 def enum(*sequential, **named):
     enums = dict(zip(sequential, range(len(sequential))), **named)
+    print(sequential)
     return type('Enum', (), enums)
 
 FONTNAME = "DwarfFortressVan.ttf"
@@ -63,6 +64,8 @@ playMap = []
 
 global E
 E = enum("SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE","SNSOR","MANUV","STRUP","STRDN")
+global ELIST
+ELIST = ["SPACE","WALL1","FLOOR","CDOOR","ODOOR","LASER","CTRLS","ENGNE","SNSOR","MANUV","STRUP","STRDN"]
 
 global S
 S=enum("SHIP1","SHIP2")
@@ -72,7 +75,8 @@ N = enum("CREWMAN","SLIME","NINJA")
 
 global C
 C = enum("LASER","CONTROL","TELEPAD","ENGINE","SENSOR","MANEUVER")
-
+global CLIST
+CLIST = ["LASER","CONTROL","TELEPAD","ENGINE","SENSOR","MANEUVER"]
 global SG
 SG = enum("FIRE")
 

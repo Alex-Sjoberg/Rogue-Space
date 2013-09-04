@@ -14,9 +14,9 @@ pygame.event.set_allowed([pygame.KEYDOWN,pygame.QUIT])
 def main():
     playing = True
     timer = gameTime.Timer();
-    g.CURSHIP = pShip = ship.Ship(3,heading = 45)
+    g.CURSHIP = pShip = ship.Ship(4,heading = 45)
     eShip1 = ship.Ship(3, x=105)
-    eShip2 = ship.Ship(1, y=95)
+    eShip2 = ship.Ship( 1, y=95)
     misc.printShips()
     misc.makeMinimap()
     

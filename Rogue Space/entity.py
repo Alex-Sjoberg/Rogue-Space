@@ -109,3 +109,8 @@ class Entity():
             if ((self.yPos -g.Yt//2) <= 0 or (self.yPos + g.Yt//2 ) >= len(self.ship.map[0])-1) and ((self.yPos -g.Yt//2+direct) <= 0 or (self.yPos + g.Yt//2 + direct) >= len(self.ship.map[0])-1):
                 return True
             return False
+        
+    def pre_pickle(self):
+        pass ##TODO remove pygame surfaces so object is pickle safe
+    def unpickle(self):
+        pass ##TODO replace surfaces after unpickling
