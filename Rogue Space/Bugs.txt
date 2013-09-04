@@ -1,0 +1,1 @@
+--When looking/using sensors, does not display immediately, requires one to move once before it starts displaying properly
