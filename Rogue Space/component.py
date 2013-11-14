@@ -9,6 +9,8 @@ import tile
 import data as g
 import misc
 import interface as UI
+from abc import  ABCMeta , abstractmethod
+
 #TODO WHy does action have more than one action? component should have more than one possible action
 # not the action itself
 # Whole component thing needs reworked
@@ -17,46 +19,44 @@ class Component():
         self.owner = owner
         action = list(action)        
         if type == g.C.LASER:
-            self.char = "\u0142"
+            char = "\u0142"
             self.action = Fire(self)
             self.name = "Laser"
             
         elif type == g.C.CONTROL:
-            self.char = "\u011f"
+            char = "\u011f"
             self.action = ActMenu(action)
             self.name = "Control console"
             
         elif type == g.C.ENGINE:
-            self.char = "\u00cb"
+            char = "\u00cb"
             self.action = Engine()
             self.name = "Engine"
             self.power = 50
             
         elif type == g.C.SENSOR:
-            self.char = "O"
+            char = "O"
             self.action = Sensor(self)
             self.name = "Sensor"
             
         elif type == g.C.MANEUVER:
-            self.char = "\u0134"
+            char = "\u0134"
             self.action = Maneuvering(self,owner = owner)
             self.name = "Maneuvering thruster"
             self.power = 10
             
         self.type = type    
-        self.init_image()
+        self.tile = tile.Tile(character = char)
         
     def execute(self,actionNum = 0):
         return self.action.execute(actionNum)
        
     def pre_pickle(self):
-        self.tile = None
+        self.tile.pre_pickle()
         
     def unpickle(self):
-        self.init_image()
+        self.tile.unpickle()
         
-    def init_image(self):
-        self.tile = tile.Tile(character = self.char)
         
 class CAction():
     def __init__(self):
@@ -187,4 +187,14 @@ class Maneuvering(CAction):
         except ValueError:
             g.LOG.logNow("Invalid heading")
             return 0
+    
+class Interactable(object):
+    __metaclass__ = ABCMeta
+    
+    
+    @abstractmethod
+    def execute_interaction(self):
+        pass
+    
+
 

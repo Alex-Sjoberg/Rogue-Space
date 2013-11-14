@@ -59,7 +59,7 @@ class ShipBuilder():
                         if self.mode == self.modes.TERRAIN:
                             self.cursor.place_terrain()
                         elif self.mode == self.modes.COMPONENT:
-                            self.cursor.place_component
+                            self.cursor.place_component()
                         elif self.mode == self.modes.LINK:
                             try:
                                 self.cursor.link_component()
@@ -79,6 +79,8 @@ class ShipBuilder():
                     elif unicode == " ":
                         self.cursor = None
                         return 0
+                    elif unicode == "o":
+                        self.load_ship()
                     misc.displayMap(self.cursor.xDisp,self.cursor.yDisp,self.cursor.zPos,self.ship)
                     g.SCREEN.blit(self.cursor.tile.image, self.cursor.pos)
                     self.commands_list.display()
@@ -120,14 +122,17 @@ class ShipBuilder():
         if shipName == "":
             self.console.logNow("Cancelled saving")
         else:
-            outfile = open("./ships/"+ str(shipName) + ".pkl", "wb")
-            self.ship.pre_pickle()
-            pickle.dump(self.ship,outfile,-1)
-            self.ship.unpickle()
-            outfile.close()
+            loading.save_ship(self.ship,shipName)
+
             
-    def load_ship(self,filename):
-        self.ship = loading.load_ship(filename)
+    def load_ship(self):
+        
+        filename = g.LOG.prompt("Load what file? ")
+        try:
+            self.ship = loading.load_ship(filename)
+        except FileNotFoundError :
+            g.LOG.logNow("File not found")
+            
               
 class BuildCursor(entity.Entity):
     def __init__(self,ship):
@@ -161,6 +166,6 @@ class BuildCursor(entity.Entity):
 if __name__ == "__main__":
     sbuilder = ShipBuilder()
     #sbuilder.create_new_ship(50, 25, 3)
-    sbuilder.load_ship("./ships/Test.pkl")
+    sbuilder.load_ship()
     sbuilder.main_loop()
     

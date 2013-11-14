@@ -4,26 +4,48 @@ Created on Mar 17, 2013
 @author: asjoberg
 '''
 
-import pygame,math,random
+import pygame,math
 import data as g
 
-
-
+## TODO split minimap tile from main map tile. Needs to get rid of all this heading and arrow conditional stuff
 class Tile():
     def __init__(self,character = "?", bg = (0,0,0) , fg = (255,255,255) ,  fontsize = g.FONTSIZE ,  heading = None , minimap = False):
         
         self.char = character
         self.fontsize = fontsize
-        self.fontObj = pygame.font.Font(g.FONTNAME,fontsize).render(self.char,False,fg,bg)
+        self.bg = bg
+        self.fg = fg
+        
+        #need to remove
+        self.minimap = minimap
+        self.heading = heading
+        
+        self.init_image(minimap,heading)
+
+        
+    def updateArrow(self,heading):
+        self.arrow = DirArrow(heading)
+        self.image.fill(self.bg)
+        self.image.blit(self.arrow.image , (0,0) )
+        self.image.blit(self.fontObj, (self.xmid-self.halfFontXLen,self.ymid-self.halfFontYLen))
+        
+    def pre_pickle(self):
+        self.image = None
+    
+    def unpickle(self):
+        self.init_image(self.minimap, self.heading)
+    
+    def init_image(self,minimap,heading):
+        self.fontObj = pygame.font.Font(g.FONTNAME,self.fontsize).render(self.char,False,self.fg,self.bg)
         
         if minimap or heading:
-            self.image = pygame.Surface( (fontsize+g.MINIPADDING,fontsize+g.MINIPADDING) )
+            self.image = pygame.Surface( (self.fontsize+g.MINIPADDING,self.fontsize+g.MINIPADDING) )
         else:
-            self.image = pygame.Surface((fontsize//2,fontsize))
+            self.image = pygame.Surface((self.fontsize//2,self.fontsize))
 
-        self.bg= bg
         self.image.fill(self.bg)
         
+        #TODO Heading bad
         if heading:
             self.arrow = DirArrow(heading)
             self.image.blit(self.arrow.image , (0,0))
@@ -37,13 +59,7 @@ class Tile():
             self.image.blit(self.fontObj,(self.xmid-self.halfFontXLen,self.ymid-self.halfFontYLen))
             
         else:
-            self.image.blit(self.fontObj,(0,0),(0,0,fontsize//2,fontsize))
-        
-    def updateArrow(self,heading):
-        self.arrow = DirArrow(heading)
-        self.image.fill(self.bg)
-        self.image.blit(self.arrow.image , (0,0) )
-        self.image.blit(self.fontObj, (self.xmid-self.halfFontXLen,self.ymid-self.halfFontYLen))
+            self.image.blit(self.fontObj,(0,0),(0,0,self.fontsize//2,self.fontsize))
         
 class DirArrow():
     def __init__(self, dir, fontsize = g.MINISIZE):

@@ -167,7 +167,7 @@ class Ship():
             self.name = "New Ship"
             self.character = "?"
             
-        self.init_image()
+        self.init_tile()
 
     def makeShip(self,text):
         g.MWIDTH
@@ -248,7 +248,7 @@ class Ship():
         self.height = len(self.map[0])
         self.zheight = len(self.map)
         
-    def init_image(self):
+    def init_tile(self):
         self.image = tile.Tile(character = self.character ,fontsize = g.MINISIZE, heading = self.heading)
         
     def calculateStats(self):
@@ -268,7 +268,7 @@ class Ship():
                         self.entMap[z][y][x].pre_pickle()
                     
     def unpickle(self):
-        self.init_image()
+        self.init_tile()
         for z in range(self.zheight):
             for y in range(self.height):
                 for x in range(self.width):
