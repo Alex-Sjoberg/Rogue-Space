@@ -8,62 +8,61 @@ class Environ():
         
         self.inventory = inv
         self.type = type
-        self.bg = bg
-        self.fg = fg
+        
         self.walkable = False
         self.component = component
         self.owner = owner
         
         if type == g.E.WALL1:
-            self.char = "\u0114"
-            self.bg = g.DGREY
+            char = "\u0114"
+            bg = g.DGREY
         elif type == g.E.FLOOR:
-            self.char = "\u002B"
-            self.bg = g.GREY
-            self.fg = g.BLACK
+            char = "\u002B"
+            bg = g.GREY
+            fg = g.BLACK
             self.walkable = True
             ##self.inventory = inventory.Inventory(self,item.Item(),item.Item())
         elif type == g.E.STRUP:
-            self.char = "<"
+            char = "<"
             self.walkable = True
         elif type == g.E.STRDN:
-            self.char = ">"        
+            char = ">"        
             self.walkable = True
             
         elif type == g.E.SPACE:
             x = random.randrange(100)
             if x <= 90:
-                self.char = " "
+                char = " "
             elif x < 93:
-                self.char = "."
+                char = "."
             elif x < 96:
-                self.char = ","
+                char = ","
             elif x < 99:
-                self.char = "'"
+                char = "'"
             else:
-                self.char = "*"
+                char = "*"
 
         elif type == g.E.LASER:
-            self.char = " "
+            char = " "
             self.component = comp.Component(type = g.C.LASER,owner = owner)
         elif type == g.E.CTRLS:
-            self.char = "\u002B"
+            char = "\u002B"
             self.component = comp.Component(type = g.C.CONTROL,owner = owner)
         elif type == g.E.ENGNE:
-            self.char = " "
+            char = " "
             self.component = comp.Component(type = g.C.ENGINE,owner = owner)
         elif type == g.E.SNSOR:
-            self.char = "\u002B"
+            char = "\u002B"
             self.component = comp.Component(type = g.C.SENSOR,owner = owner)
         elif type == g.E.MANUV:
-            self.char = " "
+            char = " "
             self.component = comp.Component(type = g.C.MANEUVER,owner = owner)
 
         else:
-            self.bg = (0,0,0)
-            self.char = "?"
+            bg = (0,0,0)
+            char = "?"
             
-        self.init_image()
+        self.tile = tile.Tile(character = char, bg = bg , fg = fg)
         
     def add_component(self,type):
         self.component = comp.Component(type = type , owner = self.owner)  
@@ -73,18 +72,15 @@ class Environ():
             self.component.execute()
             
     def pre_pickle(self):
-        self.tile = None
+        self.tile.pre_pickle()
         if self.component:
             self.component.pre_pickle()
     
     def unpickle(self):
-        self.init_image()
+        self.tile.unpickle()
         if self.component:
             self.component.unpickle()
         
-    def init_image(self):
-        self.tile = tile.Tile(character = self.char , bg = self.bg , fg = self.fg)
-
 
 
 

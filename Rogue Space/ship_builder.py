@@ -165,7 +165,7 @@ class BuildCursor(entity.Entity):
             
 if __name__ == "__main__":
     sbuilder = ShipBuilder()
-    #sbuilder.create_new_ship(50, 25, 3)
-    sbuilder.load_ship()
+    sbuilder.create_new_ship(50, 25, 3)
+    #sbuilder.load_ship()
     sbuilder.main_loop()
     
